@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Data files — results.json is generated, no need to track it
+data/results.json
+data/*.png
+data/*.html
+
+# Claude Code internals
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
