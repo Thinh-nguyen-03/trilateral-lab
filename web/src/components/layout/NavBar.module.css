@@ -1,0 +1,43 @@
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  background: #0f0f0f;
+  border-bottom: 1px solid #222;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 15px;
+  color: #e8e8e8;
+  letter-spacing: 0.02em;
+}
+
+.links {
+  display: flex;
+  gap: 4px;
+}
+
+.links a {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #999;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+
+.links a:hover {
+  color: #e8e8e8;
+  background: #1a1a1a;
+}
+
+.active {
+  color: #e8e8e8 !important;
+  background: #1e1e1e !important;
+}
