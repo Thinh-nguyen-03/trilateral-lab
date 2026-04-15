@@ -4,3 +4,8 @@ matplotlib>=3.7
 seaborn>=0.13
 ipykernel>=6.0
 pytest>=8.0
+
+# API
+fastapi>=0.111
+uvicorn[standard]>=0.29
+pydantic>=2.7
