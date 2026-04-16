@@ -14,7 +14,9 @@ export function MedianP90Heatmap({ rows }: Props) {
   const medianZ = pivotOn(rows, 'median', STRATEGY_ORDER, MODE_ORDER)
   const p90Z = pivotOn(rows, 'p90', STRATEGY_ORDER, MODE_ORDER)
 
-  const makeText = (z: number[][]) => z.map((row) => row.map((v) => `${v.toFixed(0)}`))
+  // Plotly's @types declares text as string | string[] but heatmap accepts string[][]; cast needed
+  const makeText = (z: number[][]) =>
+    z.map((row) => row.map((v) => `${v.toFixed(0)}`)) as unknown as string[]
 
   const sharedHeatmap = {
     type: 'heatmap' as const,

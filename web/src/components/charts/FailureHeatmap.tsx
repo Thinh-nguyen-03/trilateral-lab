@@ -15,7 +15,8 @@ export function FailureHeatmap({ rows }: Props) {
   const z = pivotOn(rows, 'failure_rate', STRATEGY_ORDER, MODE_ORDER)
   const meanZ = pivotOn(rows, 'mean', STRATEGY_ORDER, MODE_ORDER)
 
-  const text = z.map((row) => row.map((v) => `${(v * 100).toFixed(0)}%`))
+  // Plotly @types narrows text to string | string[] but heatmap accepts string[][]
+  const text = z.map((row) => row.map((v) => `${(v * 100).toFixed(0)}%`)) as unknown as string[]
   const customdata = meanZ
 
   return (

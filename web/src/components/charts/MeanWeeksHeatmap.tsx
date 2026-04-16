@@ -14,7 +14,7 @@ export function MeanWeeksHeatmap({ rows }: Props) {
   const z = pivotOn(rows, 'mean', STRATEGY_ORDER, MODE_ORDER)
   const failZ = pivotOn(rows, 'failure_rate', STRATEGY_ORDER, MODE_ORDER)
 
-  const text = z.map((row) => row.map((v) => `${v.toFixed(0)}w`))
+  const text = z.map((row) => row.map((v) => `${v.toFixed(0)}w`)) as unknown as string[]
 
   return (
     <Plot
