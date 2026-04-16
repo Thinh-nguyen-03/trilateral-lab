@@ -1,4 +1,4 @@
-import Plot from 'react-plotly.js'
+import Plot from '../../lib/Plot'
 import { useSimulationStore } from '../../store/simulationStore'
 
 export function ConvergenceChart() {

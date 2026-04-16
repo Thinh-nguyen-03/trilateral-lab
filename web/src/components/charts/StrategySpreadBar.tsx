@@ -1,4 +1,4 @@
-import Plot from 'react-plotly.js'
+import Plot from '../../lib/Plot'
 import type { ResultRow } from '../../types/api'
 import { STRATEGY_ORDER, MODE_ORDER } from '../../api/results'
 import { DARK_LAYOUT } from './chartTheme'
