@@ -1,10 +1,3 @@
-// react-plotly.js/factory does not ship its own types
-declare module 'react-plotly.js/factory' {
-  import type { ComponentType } from 'react'
-  function createPlotlyComponent(plotly: unknown): ComponentType<Record<string, unknown>>
-  export default createPlotlyComponent
-}
-
 // deck.gl 8.x ships CJS without proper .d.ts exports map for bundler resolution.
 // These declarations let TypeScript be satisfied; skipLibCheck handles the rest.
 declare module '@deck.gl/react' {
