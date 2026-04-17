@@ -52,9 +52,9 @@ export function useSimulation() {
   stepRef.current = step
 
   const start = useCallback(async () => {
-    const { strategy, measurementMode } = useSimulationStore.getState()
-    const res = await startSession(strategy, measurementMode)
-    store.setSession(res.session_id, res.grid_meta)
+    const { strategy, measurementMode, previewBoxLocation } = useSimulationStore.getState()
+    const res = await startSession(strategy, measurementMode, previewBoxLocation)
+    store.setSession(res.session_id, res.grid_meta, res.box_location)
   }, [store])
 
   const startAutoPlay = useCallback(() => {

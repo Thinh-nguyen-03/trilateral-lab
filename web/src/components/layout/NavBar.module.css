@@ -1,43 +1,87 @@
 .nav {
+  height: var(--nav-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  height: 52px;
-  background: #0f0f0f;
-  border-bottom: 1px solid #222;
+  padding: 0 16px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 200;
+  font-family: var(--mono);
 }
 
+/* ── Brand ── */
 .brand {
-  font-weight: 600;
-  font-size: 15px;
-  color: #e8e8e8;
-  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+.bracket {
+  color: var(--amber);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.brandName {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.12em;
+}
+
+.brandSub {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.16em;
+  font-weight: 400;
+  padding-top: 1px;
+  margin-left: 6px;
+}
+
+/* ── Links ── */
 .links {
   display: flex;
-  gap: 4px;
+  gap: 2px;
 }
 
-.links a {
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #999;
-  text-decoration: none;
-  transition: color 0.15s, background 0.15s;
+.link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  border: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
-.links a:hover {
-  color: #e8e8e8;
-  background: #1a1a1a;
+.link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+  border-color: var(--border-bright);
 }
 
-.active {
-  color: #e8e8e8 !important;
-  background: #1e1e1e !important;
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Active states */
+.linkAmber {
+  color: var(--amber) !important;
+  border-color: var(--amber) !important;
+  background: var(--amber-dim) !important;
+}
+
+.linkGreen {
+  color: var(--green) !important;
+  border-color: var(--green) !important;
+  background: var(--green-dim) !important;
 }

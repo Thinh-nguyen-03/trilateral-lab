@@ -1,0 +1,282 @@
+/* ── Map wrapper ────────────────────────────────────── */
+.wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Scanline CRT effect ────────────────────────────── */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+}
+
+/* ── Corner HUD decorations ─────────────────────────── */
+.corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.cornerTL { top: 10px;    left: 10px;   border-top: 1px solid var(--green); border-left:  1px solid var(--green); }
+.cornerTR { top: 10px;    right: 10px;  border-top: 1px solid var(--green); border-right: 1px solid var(--green); }
+.cornerBL { bottom: 30px; left: 10px;   border-bottom: 1px solid var(--green); border-left:  1px solid var(--green); }
+.cornerBR { bottom: 30px; right: 10px;  border-bottom: 1px solid var(--green); border-right: 1px solid var(--green); }
+
+/* ── Coordinate readout ─────────────────────────────── */
+.readout {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: rgba(0, 230, 118, 0.45);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+}
+
+.readoutLabel { color: var(--green); font-weight: 700; }
+.readoutSep   { color: rgba(0, 230, 118, 0.2); }
+
+/* ── MapLibre popup reset ───────────────────────────── */
+:global(.maplibregl-popup-content) {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+:global(.maplibregl-popup-tip) {
+  border-top-color: rgba(0, 30, 15, 0.95) !important;
+}
+
+/* ── Hover tooltip card ─────────────────────────────── */
+.popup { }
+
+.card {
+  background: rgba(4, 12, 8, 0.96);
+  border: 1px solid var(--green);
+  font-family: var(--mono);
+  font-size: 10px;
+  min-width: 160px;
+  box-shadow: 0 0 16px rgba(0, 230, 118, 0.15), 0 4px 20px rgba(0,0,0,0.6);
+}
+
+.cardHead {
+  padding: 5px 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  background: rgba(0, 230, 118, 0.06);
+  border-bottom: 1px solid rgba(0, 230, 118, 0.15);
+}
+
+.cardHeadRed   { color: var(--red);   background: rgba(255, 61, 61, 0.06);   border-bottom-color: rgba(255,61,61,0.2); }
+.cardHeadGreen { color: var(--green); background: rgba(0, 230, 118, 0.08);   border-bottom-color: rgba(0,230,118,0.25); }
+
+.cardRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 12px;
+}
+
+.cardRow:not(:last-child) {
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.cardKey {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  flex-shrink: 0;
+}
+
+.cardVal {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* ── Convergence HUD panel ──────────────────────────── */
+.convergencePanel {
+  position: absolute;
+  bottom: 36px;
+  left: 16px;
+  z-index: 12;
+  width: 420px;
+  background: rgba(3, 8, 5, 0.92);
+  border: 1px solid rgba(0, 230, 118, 0.18);
+  pointer-events: auto;
+  backdrop-filter: blur(2px);
+}
+
+.convergencePanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 9px 4px;
+  border-bottom: 1px solid rgba(0, 230, 118, 0.12);
+}
+
+.convergencePanelTitle {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--amber);
+}
+
+.convergenceTitleGreen { color: var(--green) !important; }
+
+.convergencePanelToggle {
+  background: none;
+  border: 1px solid var(--border-bright);
+  color: var(--text-dim);
+  font-size: 9px;
+  cursor: pointer;
+  padding: 1px 7px;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  font-family: var(--mono);
+  transition: all 0.15s;
+}
+.convergencePanelToggle:hover { color: var(--green); border-color: var(--green); }
+
+.convergencePanelBody {
+  padding: 2px 0 0;
+}
+
+/* ── Pick-mode overlay ──────────────────────────────── */
+.pickOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: rgba(0, 230, 118, 0.7);
+  text-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+}
+
+.pickGlyph {
+  font-size: 32px;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+/* ── Map Legend ─────────────────────────────────────── */
+.legend {
+  position: absolute;
+  bottom: 36px;
+  right: 16px;
+  z-index: 12;
+  background: rgba(3, 8, 5, 0.88);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  min-width: 110px;
+}
+
+.legendTitle {
+  padding: 4px 8px 3px;
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--green);
+  border-bottom: 1px solid rgba(0, 230, 118, 0.15);
+  letter-spacing: 0.18em;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 8px;
+}
+
+.legendItem:not(:last-child) {
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Swatch types */
+.legendDotBelief {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 120, 0, 0.7);
+  flex-shrink: 0;
+}
+
+.legendLine {
+  width: 16px;
+  height: 0;
+  border-top: 2px solid #6ec6ff;
+  flex-shrink: 0;
+}
+
+.legendReticle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid #6ec6ff;
+  position: relative;
+  flex-shrink: 0;
+}
+.legendReticle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #6ec6ff;
+}
+
+.legendDotEstimate {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff3d3d;
+  border: 1px solid rgba(255,255,255,0.5);
+  flex-shrink: 0;
+}
+
+.legendDotBox {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  border: 1px solid rgba(255,255,255,0.5);
+  flex-shrink: 0;
+}

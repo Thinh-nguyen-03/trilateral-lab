@@ -42,6 +42,7 @@ class GridMeta(BaseModel):
 class StartSessionRequest(BaseModel):
     strategy: str       # "fixed" | "random" | "max_separation" | "centroid" | "info_gain"
     measurement_mode: str  # "EXACT" | "ROUND_10_MILES" | etc.
+    box_location: Optional[PointModel] = None  # if provided, use this as the hidden target
 
 
 class StartSessionResponse(BaseModel):
@@ -49,6 +50,7 @@ class StartSessionResponse(BaseModel):
     strategy: str
     measurement_mode: str
     grid_meta: GridMeta
+    box_location: PointModel  # always returned so UI can display target pre-sim
 
 
 class StepResponse(BaseModel):

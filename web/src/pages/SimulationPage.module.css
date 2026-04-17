@@ -1,55 +1,117 @@
 .page {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  height: calc(100vh - 52px);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--nav-h));
   overflow: hidden;
+  background: var(--bg);
 }
 
-.sidebar {
-  border-right: 1px solid #1a1a1a;
-  overflow-y: auto;
-  background: #0d0d0d;
-}
-
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
-
-.sidebarInner {
-  padding: 20px;
+/* ── Status bar ────────────────────────────────────────── */
+.bar {
+  height: 34px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  gap: 12px;
 }
 
-.section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.barLeft  { display: flex; align-items: center; gap: 10px; }
+.barRight { display: flex; align-items: center; gap: 6px; }
 
-.sectionTitle {
-  font-size: 11px;
-  font-weight: 600;
-  color: #555;
-  text-transform: uppercase;
+.toggle {
+  background: none;
+  border: 1px solid var(--border-bright);
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 2px 7px;
+  font-size: 9px;
+  font-family: var(--mono);
+  transition: all 0.15s;
+  line-height: 1;
+}
+.toggle:hover { border-color: var(--green); color: var(--green); }
+
+.sysId {
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 10px;
   letter-spacing: 0.06em;
 }
 
-.mapContainer {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.sep { color: var(--text-muted); }
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  border: 1px solid;
 }
 
-@media (max-width: 768px) {
-  .page {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: auto;
-  }
+.pulse {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: blink 1.8s ease-in-out infinite;
+}
 
-  .mapContainer {
-    height: 60vh;
-  }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+/* Badge variants */
+.badge_idle     { color: var(--text-dim);  border-color: var(--border-bright); }
+.badge_running  { color: var(--green);     border-color: var(--green); background: var(--green-dim); }
+.badge_playing  { color: var(--amber);     border-color: var(--amber); background: var(--amber-dim); }
+.badge_complete { color: var(--text-dim);  border-color: var(--border-bright); }
+
+/* Complete-state overrides applied together with badge_complete */
+.localized { color: var(--green) !important; border-color: var(--green) !important; background: var(--green-dim) !important; }
+.timeout   { color: var(--red)   !important; border-color: var(--red)   !important; background: var(--red-dim)   !important; }
+
+.weekCounter {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  border: 1px solid var(--border-bright);
+  padding: 1px 7px;
+}
+
+.resultNote {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+.specTag {
+  font-size: 9px;
+  color: var(--text-muted);
+  border: 1px solid var(--border-bright);
+  padding: 1px 6px;
+  letter-spacing: 0.08em;
+}
+
+/* ── Main layout ───────────────────────────────────────── */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mapWrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
 }

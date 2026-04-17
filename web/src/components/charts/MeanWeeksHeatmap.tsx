@@ -1,20 +1,17 @@
 import Plot from '../../lib/Plot'
 import type { ResultRow } from '../../types/api'
 import { STRATEGY_ORDER, MODE_ORDER, pivotOn } from '../../api/results'
-import { DARK_LAYOUT, WEEKS_COLORSCALE } from './chartTheme'
+import { DARK_LAYOUT, WEEKS_COLORSCALE, MONO, AXIS } from './chartTheme'
 
-const STRATEGY_LABELS = ['Fixed', 'Random', 'Max-Sep', 'Centroid', 'Info-Gain*']
-const MODE_LABELS = ['Exact', 'Round 10mi', 'Round 25mi', 'Round 100mi', 'Gaussian σ=5', 'Gaussian σ=25']
+const STRATEGY_LABELS = ['FIXED', 'RANDOM', 'MAX-SEP', 'CENTROID', 'INFO-GAIN*']
+const MODE_LABELS = ['EXACT', 'RND ±10mi', 'RND ±25mi', 'RND ±100mi', 'GAUSS σ5', 'GAUSS σ25']
 
-interface Props {
-  rows: ResultRow[]
-}
+interface Props { rows: ResultRow[] }
 
 export function MeanWeeksHeatmap({ rows }: Props) {
-  const z = pivotOn(rows, 'mean', STRATEGY_ORDER, MODE_ORDER)
-  const failZ = pivotOn(rows, 'failure_rate', STRATEGY_ORDER, MODE_ORDER)
-
-  const text = z.map((row) => row.map((v) => `${v.toFixed(0)}w`)) as unknown as string[]
+  const z     = pivotOn(rows, 'mean',         STRATEGY_ORDER, MODE_ORDER)
+  const failZ = pivotOn(rows, 'failure_rate',  STRATEGY_ORDER, MODE_ORDER)
+  const text  = z.map((row) => row.map((v) => `${v.toFixed(0)}w`)) as unknown as string[]
 
   return (
     <Plot
@@ -25,19 +22,44 @@ export function MeanWeeksHeatmap({ rows }: Props) {
         y: STRATEGY_LABELS,
         text,
         texttemplate: '%{text}',
-        textfont: { size: 13 },
+        textfont: { size: 12, family: MONO, color: '#f0f0f0' },
         customdata: failZ,
-        hovertemplate: '<b>%{y} / %{x}</b><br>Mean weeks: %{z:.1f}<br>Failure rate: %{customdata:.1%}<extra></extra>',
+        hovertemplate: '<b>%{y} / %{x}</b><br>Mean: %{z:.1f}w<br>Fail: %{customdata:.1%}<extra></extra>',
         colorscale: WEEKS_COLORSCALE,
         zmin: 5,
         zmax: 52,
-        colorbar: { title: { text: 'Mean weeks' } },
+        xgap: 2,
+        ygap: 2,
+        colorbar: {
+          title: { text: 'MEAN WKS', font: { family: MONO, size: 11, color: '#d8d8d8' } },
+          tickfont: { family: MONO, size: 11, color: '#d8d8d8' },
+          dtick: 10,
+          thickness: 12,
+          len: 0.8,
+        },
       } as Plotly.Data]}
       layout={{
         ...DARK_LAYOUT,
-        xaxis: { title: { text: 'Measurement mode' }, side: 'bottom' },
-        yaxis: { title: { text: 'Strategy' }, autorange: 'reversed' },
-        height: 320,
+        xaxis: {
+          type: 'category',
+          ticks: 'outside',
+          ticklen: 4,
+          tickcolor: 'transparent',
+          tickfont: AXIS.tickfont,
+          color: AXIS.color,
+          gridcolor: AXIS.gridcolor,
+        },
+        yaxis: {
+          type: 'category',
+          autorange: 'reversed',
+          ticks: 'outside',
+          ticklen: 4,
+          tickcolor: 'transparent',
+          tickfont: AXIS.tickfont,
+          color: AXIS.color,
+        },
+        height: 310,
+        margin: { l: 90, r: 96, t: 12, b: 56 },
       }}
       style={{ width: '100%' }}
       useResizeHandler

@@ -1,29 +1,72 @@
+import { useState } from 'react'
 import { SimulationMap } from '../components/map/SimulationMap'
-import { StrategyModeForm } from '../components/simulation/StrategyModeForm'
-import { StepControls } from '../components/simulation/StepControls'
-import { SimulationPanel } from '../components/simulation/SimulationPanel'
+import { SidePanel } from '../components/simulation/SidePanel'
+import { useSimulationStore } from '../store/simulationStore'
 import styles from './SimulationPage.module.css'
 
+const STATUS_META: Record<string, { label: string; cls: string }> = {
+  idle:     { label: 'STANDBY',      cls: 'idle' },
+  running:  { label: 'MISSION ACTIVE', cls: 'running' },
+  playing:  { label: 'AUTO-RUNNING', cls: 'playing' },
+  complete: { label: 'COMPLETE',     cls: 'complete' },
+}
+
 export function SimulationPage() {
+  const [panelOpen, setPanelOpen] = useState(true)
+  const { status, currentStep } = useSimulationStore()
+  const meta = STATUS_META[status] ?? STATUS_META.idle
+
+  const completeColor =
+    status === 'complete'
+      ? currentStep?.localized
+        ? styles.localized
+        : styles.timeout
+      : ''
+
   return (
     <div className={styles.page}>
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarInner}>
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Configuration</h2>
-            <StrategyModeForm />
-          </section>
-
-          <section className={styles.section}>
-            <StepControls />
-          </section>
-
-          <SimulationPanel />
+      {/* ── Top status bar ─────────────────────────────── */}
+      <header className={styles.bar}>
+        <div className={styles.barLeft}>
+          <button
+            className={styles.toggle}
+            onClick={() => setPanelOpen((p) => !p)}
+            title={panelOpen ? 'Collapse panel' : 'Expand panel'}
+          >
+            {panelOpen ? '◀' : '▶'}
+          </button>
+          <span className={styles.sysId}>TRI-LAT-SIM // v1.0</span>
+          <span className={styles.sep}>│</span>
+          <span className={`${styles.badge} ${styles[`badge_${meta.cls}`]} ${completeColor}`}>
+            <span className={styles.pulse} />
+            {meta.label}
+          </span>
+          {(status === 'running' || status === 'playing') && currentStep && (
+            <span className={styles.weekCounter}>
+              W{String(currentStep.week).padStart(2, '0')} / 52
+            </span>
+          )}
+          {status === 'complete' && currentStep && (
+            <span className={styles.resultNote}>
+              {currentStep.localized
+                ? `LOCALIZED  W${currentStep.week}`
+                : 'TIMEOUT  W52'}
+            </span>
+          )}
         </div>
-      </aside>
+        <div className={styles.barRight}>
+          <span className={styles.specTag}>CONUS</span>
+          <span className={styles.specTag}>GRID 144K</span>
+          <span className={styles.specTag}>PARTICLE 10K</span>
+        </div>
+      </header>
 
-      <div className={styles.mapContainer}>
-        <SimulationMap />
+      {/* ── Main layout ────────────────────────────────── */}
+      <div className={styles.layout}>
+        <SidePanel open={panelOpen} />
+        <div className={styles.mapWrap}>
+          <SimulationMap />
+        </div>
       </div>
     </div>
   )

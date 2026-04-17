@@ -7,7 +7,7 @@ from src.belief.grid import GridBelief, LAT_MIN, LAT_MAX, LON_MIN, LON_MAX, GRID
 from src.belief.particle import ParticleFilter
 from src.environment import Environment
 from src.simulation import LOCALIZATION_THRESHOLD_MILES, MAX_WEEKS
-from src.types import Measurement, SearchState
+from src.types import Measurement, Point, SearchState
 
 from ..models import (
     GridMeta,
@@ -57,7 +57,14 @@ async def start_session(req: StartSessionRequest, store=Depends(_get_store)):
     loop = asyncio.get_event_loop()
 
     env = Environment(req.measurement_mode)
-    box = await loop.run_in_executor(None, env.sample_box_location)
+    if req.box_location is not None:
+        # Clamp to grid bounds in case client sends a point just outside
+        box = Point(
+            lat=max(LAT_MIN, min(LAT_MAX, req.box_location.lat)),
+            lon=max(LON_MIN, min(LON_MAX, req.box_location.lon)),
+        )
+    else:
+        box = await loop.run_in_executor(None, env.sample_box_location)
 
     belief = (
         ParticleFilter(req.measurement_mode)
@@ -84,6 +91,7 @@ async def start_session(req: StartSessionRequest, store=Depends(_get_store)):
         strategy=req.strategy,
         measurement_mode=req.measurement_mode,
         grid_meta=_GRID_META,
+        box_location=PointModel(lat=box.lat, lon=box.lon),
     )
 
 

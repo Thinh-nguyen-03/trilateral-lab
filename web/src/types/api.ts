@@ -40,6 +40,7 @@ export interface StartSessionResponse {
   strategy: string
   measurement_mode: string
   grid_meta: GridMeta
+  box_location: PointModel
 }
 
 export interface StepResponse {

@@ -7,13 +7,12 @@ export function WeekTimeline() {
   const { history } = useSimulationStore()
   const endRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll to latest week
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' })
+    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }, [history.length])
 
   if (history.length === 0) {
-    return <p className={styles.empty}>Steps will appear here as the trial progresses.</p>
+    return <p className={styles.empty}>— NO DATA —</p>
   }
 
   return (
@@ -22,14 +21,21 @@ export function WeekTimeline() {
         const [r, g, b] = weekColor(i)
         const loc = step.chosen_location
         return (
-          <div key={i} className={styles.card}>
-            <div className={styles.dot} style={{ background: `rgb(${r},${g},${b})` }} />
-            <div className={styles.info}>
-              <span className={styles.week}>Wk {step.week}</span>
+          <div key={i} className={styles.row}>
+            <span className={styles.week}>W{String(step.week).padStart(2, '0')}</span>
+            <div
+              className={styles.bar}
+              style={{ borderLeftColor: `rgb(${r},${g},${b})` }}
+            >
               <span className={styles.coords}>
-                {loc.lat.toFixed(1)}°, {loc.lon.toFixed(1)}°
+                {loc.lat.toFixed(2)}°N  {Math.abs(loc.lon).toFixed(2)}°W
               </span>
-              <span className={styles.dist}>{step.observed_distance.toFixed(0)} mi</span>
+              <div className={styles.stats}>
+                <span className={styles.dist}>{step.observed_distance.toFixed(0)} mi</span>
+                {step.uncertainty_radius < Infinity && (
+                  <span className={styles.unc}>±{step.uncertainty_radius.toFixed(0)}</span>
+                )}
+              </div>
             </div>
           </div>
         )

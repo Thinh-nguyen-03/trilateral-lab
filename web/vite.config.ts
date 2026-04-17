@@ -11,4 +11,7 @@ export default defineConfig({
   worker: {
     format: 'es',
   },
+  optimizeDeps: {
+    include: ['maplibre-gl', 'react-map-gl'],
+  },
 })

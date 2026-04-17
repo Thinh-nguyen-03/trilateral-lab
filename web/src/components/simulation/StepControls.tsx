@@ -20,9 +20,9 @@ export function StepControls() {
 
   if (status === 'idle') {
     return (
-      <div className={styles.row}>
+      <div className={styles.wrap}>
         <button className={styles.primary} onClick={handleStart} disabled={loading}>
-          {loading ? 'Starting…' : 'Start Trial'}
+          {loading ? '■ INITIALIZING...' : '▶ LAUNCH TRIAL'}
         </button>
       </div>
     )
@@ -30,27 +30,30 @@ export function StepControls() {
 
   if (status === 'complete') {
     return (
-      <div className={styles.row}>
-        <button className={styles.secondary} onClick={reset}>Reset</button>
+      <div className={styles.wrap}>
+        <button className={styles.ghost} onClick={reset}>↺  RESET SYSTEM</button>
       </div>
     )
   }
 
   return (
-    <div className={styles.row}>
+    <div className={styles.wrap}>
       {status === 'playing' ? (
-        <button className={styles.secondary} onClick={stopAutoPlay}>Pause</button>
+        <>
+          <button className={styles.amber} onClick={stopAutoPlay}>⏸  PAUSE</button>
+          <button className={`${styles.ghost} ${styles.ghostIcon}`} onClick={reset}>↺</button>
+        </>
       ) : (
         <>
-          <button className={styles.primary} onClick={handleStep} disabled={loading}>
-            {loading ? '…' : 'Step'}
+          <button className={styles.secondary} onClick={handleStep} disabled={loading}>
+            {loading ? '■■■' : '▶  STEP'}
           </button>
-          <button className={styles.accent} onClick={startAutoPlay} disabled={loading}>
-            Auto-play
+          <button className={styles.primary} onClick={startAutoPlay} disabled={loading}>
+            ▶▶ AUTO-RUN
           </button>
+          <button className={`${styles.ghost} ${styles.ghostIcon}`} onClick={reset}>↺</button>
         </>
       )}
-      <button className={styles.ghost} onClick={reset}>Reset</button>
     </div>
   )
 }
