@@ -139,3 +139,67 @@
   font-size: 8px;
   color: var(--text-muted);
 }
+
+/* ── Manual benchmark card ──────────────────────── */
+.benchmark {
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.benchmarkHead {
+  padding: 4px 10px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-bottom: 1px solid rgba(244, 180, 0, 0.3);
+}
+
+.benchmarkGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border);
+}
+
+.benchmarkRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 10px;
+  background: var(--surface-2);
+}
+
+.benchmarkRowPrimary {
+  background: rgba(244, 180, 0, 0.06);
+}
+
+.benchmarkLabel {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.benchmarkRowPrimary .benchmarkLabel { color: var(--amber); }
+
+.benchmarkValue {
+  font-size: 10px;
+  color: var(--text);
+  letter-spacing: 0.06em;
+}
+
+.benchmarkVerdict {
+  padding: 6px 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: center;
+  border-top: 1px solid;
+}
+
+.benchmarkWin  { color: var(--green); border-top-color: rgba(0, 230, 118, 0.25); background: rgba(0, 230, 118, 0.05); }
+.benchmarkMid  { color: var(--amber); border-top-color: rgba(244, 180, 0, 0.25); background: rgba(244, 180, 0, 0.05); }
+.benchmarkLoss { color: var(--red);   border-top-color: rgba(255, 61, 61, 0.25); background: rgba(255, 61, 61, 0.04); }
