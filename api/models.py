@@ -53,6 +53,12 @@ class StartSessionResponse(BaseModel):
     box_location: PointModel  # always returned so UI can display target pre-sim
 
 
+class StepRequest(BaseModel):
+    # For the manual strategy the caller provides the next measurement location.
+    # Ignored for all other strategies.
+    location: Optional[PointModel] = None
+
+
 class StepResponse(BaseModel):
     week: int
     localized: bool
@@ -66,7 +72,7 @@ class StepResponse(BaseModel):
     box_location: Optional[PointModel] = None  # revealed only when trial_complete
 
 
-VALID_STRATEGIES = {"fixed", "random", "max_separation", "centroid", "info_gain", "entropy_gradient"}
+VALID_STRATEGIES = {"fixed", "random", "max_separation", "centroid", "info_gain", "entropy_gradient", "manual"}
 VALID_MODES = {
     "EXACT",
     "ROUND_10_MILES",

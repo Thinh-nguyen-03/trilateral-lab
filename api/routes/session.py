@@ -15,6 +15,7 @@ from ..models import (
     PointModel,
     StartSessionRequest,
     StartSessionResponse,
+    StepRequest,
     StepResponse,
     VALID_MODES,
     VALID_STRATEGIES,
@@ -96,7 +97,7 @@ async def start_session(req: StartSessionRequest, store=Depends(_get_store)):
 
 
 @router.post("/session/{session_id}/step", response_model=StepResponse)
-async def step(session_id: str, store=Depends(_get_store)):
+async def step(session_id: str, req: StepRequest = StepRequest(), store=Depends(_get_store)):
     entry = store.get(session_id)
     if entry is None:
         raise HTTPException(404, "Session not found or expired")
@@ -106,9 +107,21 @@ async def step(session_id: str, store=Depends(_get_store)):
 
     loop = asyncio.get_event_loop()
 
-    # Both choose_location and belief.update can be CPU-heavy (InfoGain ~300ms).
-    # Run them in a thread pool so the event loop stays free.
-    location = await loop.run_in_executor(None, entry.strategy.choose_location, state)
+    strategy_name = type(entry.strategy).__name__
+    is_manual = strategy_name == "ManualStrategy"
+
+    if is_manual:
+        if req.location is None:
+            raise HTTPException(400, "Manual strategy requires a 'location' in the step body.")
+        location = Point(
+            lat=max(LAT_MIN, min(LAT_MAX, req.location.lat)),
+            lon=max(LON_MIN, min(LON_MAX, req.location.lon)),
+        )
+    else:
+        # Both choose_location and belief.update can be CPU-heavy (InfoGain ~300ms).
+        # Run them in a thread pool so the event loop stays free.
+        location = await loop.run_in_executor(None, entry.strategy.choose_location, state)
+
     distance = entry.env.measure_distance(location, entry.box)
 
     await loop.run_in_executor(None, entry.belief.update, location, distance)

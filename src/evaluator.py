@@ -13,6 +13,7 @@ def _build_registry():
     from .strategies.hybrid import HybridStrategy
     from .strategies.info_gain import InfoGainStrategy
     from .strategies.entropy_gradient import EntropyGradientStrategy
+    from .strategies.manual import ManualStrategy
     return {
         "fixed": FixedStrategy,
         "random": RandomStrategy,
@@ -21,6 +22,7 @@ def _build_registry():
         "hybrid": HybridStrategy,
         "info_gain": InfoGainStrategy,
         "entropy_gradient": EntropyGradientStrategy,
+        "manual": ManualStrategy,
     }
 
 
