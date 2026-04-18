@@ -16,7 +16,10 @@ _GAUSSIAN_MODES = {"NOISY_GAUSSIAN_5", "NOISY_GAUSSIAN_25"}
 @dataclass
 class TrialResult:
     localized: bool
-    weeks: int  # includes ground search penalty if localized
+    weeks: int              # includes ground search penalty if localized
+    radius_by_week: list    # uncertainty_radius at each week (length <= MAX_WEEKS)
+    box_lat: float = 0.0
+    box_lon: float = 0.0
 
 
 def run_trial(strategy: Strategy, env: Environment) -> TrialResult:
@@ -36,6 +39,8 @@ def run_trial(strategy: Strategy, env: Environment) -> TrialResult:
         best_estimate=None,
     )
 
+    radius_by_week = []
+
     for week in range(1, MAX_WEEKS + 1):
         state.week = week
         location = strategy.choose_location(state)
@@ -47,7 +52,21 @@ def run_trial(strategy: Strategy, env: Environment) -> TrialResult:
         state.best_estimate = belief.best_estimate()
         state.belief = belief
 
-        if state.uncertainty_radius < LOCALIZATION_THRESHOLD_MILES:
-            return TrialResult(localized=True, weeks=week + GROUND_SEARCH_PENALTY_WEEKS)
+        radius_by_week.append(state.uncertainty_radius)
 
-    return TrialResult(localized=False, weeks=MAX_WEEKS)
+        if state.uncertainty_radius < LOCALIZATION_THRESHOLD_MILES:
+            return TrialResult(
+                localized=True,
+                weeks=week + GROUND_SEARCH_PENALTY_WEEKS,
+                radius_by_week=radius_by_week,
+                box_lat=box.lat,
+                box_lon=box.lon,
+            )
+
+    return TrialResult(
+        localized=False,
+        weeks=MAX_WEEKS,
+        radius_by_week=radius_by_week,
+        box_lat=box.lat,
+        box_lon=box.lon,
+    )

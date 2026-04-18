@@ -56,6 +56,20 @@ export interface StepResponse {
   box_location: PointModel | null
 }
 
+export interface RegionStats {
+  n_trials: number
+  failure_rate: number
+  mean: number
+  median: number
+}
+
+export interface ThresholdStats {
+  failure_rate: number
+  mean: number
+  median: number
+  p90: number
+}
+
 export interface ResultStats {
   n_trials: number
   mean: number
@@ -65,6 +79,9 @@ export interface ResultStats {
   p99: number
   max: number
   failure_rate: number
+  median_radius_curve?: number[]
+  regional_stats?: Record<string, RegionStats | null>
+  threshold_stats?: Record<string, ThresholdStats>
 }
 
 export type RawResults = Record<string, ResultStats>

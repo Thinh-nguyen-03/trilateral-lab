@@ -32,11 +32,15 @@ interface SimulationState {
   decodedGrid: DecodedGrid | null
   decodedParticles: DecodedParticles | null
 
+  // Auto-play speed multiplier: 0.5 | 1 | 2 | 4 | 8
+  autoPlaySpeed: number
+
   // Actions
   setStrategy: (s: string) => void
   setMeasurementMode: (m: string) => void
   setBoxPlacementMode: (m: BoxPlacementMode) => void
   setPreviewBoxLocation: (loc: PointModel) => void
+  setAutoPlaySpeed: (n: number) => void
   setSession: (sessionId: string, gridMeta: GridMeta, boxLocation: PointModel) => void
   setStatus: (s: SimStatus) => void
   addStep: (step: StepResponse, grid: DecodedGrid | null, particles: DecodedParticles | null) => void
@@ -63,11 +67,13 @@ export const useSimulationStore = create<SimulationState>((set) => ({
   strategy:         'max_separation',
   measurementMode:  'ROUND_25_MILES',
   boxPlacementMode: 'random',
+  autoPlaySpeed:    1,
 
   setStrategy:           (strategy)           => set({ strategy }),
   setMeasurementMode:    (measurementMode)     => set({ measurementMode }),
   setBoxPlacementMode:   (boxPlacementMode)    => set({ boxPlacementMode }),
   setPreviewBoxLocation: (previewBoxLocation)  => set({ previewBoxLocation }),
+  setAutoPlaySpeed:      (autoPlaySpeed)       => set({ autoPlaySpeed }),
 
   setSession: (sessionId, gridMeta, boxLocation) =>
     set((state) => ({

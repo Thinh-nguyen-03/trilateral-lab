@@ -3,11 +3,12 @@ import { useSimulationStore, randomConusPoint } from '../../store/simulationStor
 import styles from './StrategyModeForm.module.css'
 
 const STRATEGIES = [
-  { value: 'fixed',           label: 'FIXED SEQUENCE' },
-  { value: 'random',          label: 'RANDOM' },
-  { value: 'max_separation',  label: 'MAX-SEPARATION' },
-  { value: 'centroid',        label: 'CENTROID' },
-  { value: 'info_gain',       label: 'INFO-GAIN  [~300ms]' },
+  { value: 'fixed',             label: 'FIXED SEQUENCE' },
+  { value: 'random',            label: 'RANDOM' },
+  { value: 'max_separation',    label: 'MAX-SEPARATION' },
+  { value: 'centroid',          label: 'CENTROID' },
+  { value: 'info_gain',         label: 'INFO-GAIN  [~300ms]' },
+  { value: 'entropy_gradient',  label: 'ENTROPY-GRAD  [~300ms]' },
 ]
 
 const MODES = [

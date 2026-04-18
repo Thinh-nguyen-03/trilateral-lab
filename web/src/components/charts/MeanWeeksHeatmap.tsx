@@ -3,7 +3,7 @@ import type { ResultRow } from '../../types/api'
 import { STRATEGY_ORDER, MODE_ORDER, pivotOn } from '../../api/results'
 import { DARK_LAYOUT, WEEKS_COLORSCALE, MONO, AXIS } from './chartTheme'
 
-const STRATEGY_LABELS = ['FIXED', 'RANDOM', 'MAX-SEP', 'CENTROID', 'INFO-GAIN*']
+const STRATEGY_LABELS = ['FIXED', 'RANDOM', 'MAX-SEP', 'CENTROID', 'INFO-GAIN*', 'ENTROPY*']
 const MODE_LABELS = ['EXACT', 'RND ±10mi', 'RND ±25mi', 'RND ±100mi', 'GAUSS σ5', 'GAUSS σ25']
 
 interface Props { rows: ResultRow[] }

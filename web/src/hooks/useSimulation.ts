@@ -3,10 +3,15 @@ import { startSession, stepSession, deleteSession } from '../api/session'
 import { useSimulationStore } from '../store/simulationStore'
 import { decodeGridBelief, decodeParticles } from '../components/map/mapUtils'
 
+// Module-level singletons so multiple hook instances (SimulationPage + StepControls)
+// share the same timer and guard, preventing double-step and un-clearable intervals.
+const _autoPlay = { current: null as ReturnType<typeof setInterval> | null }
+const _stepping = { current: false }
+
 export function useSimulation() {
   const store = useSimulationStore()
-  const steppingRef = useRef(false)
-  const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const steppingRef = _stepping
+  const autoPlayRef = _autoPlay
 
   const stopAutoPlay = useCallback(() => {
     if (autoPlayRef.current !== null) {
@@ -58,8 +63,9 @@ export function useSimulation() {
   }, [store])
 
   const startAutoPlay = useCallback(() => {
-    const { strategy } = useSimulationStore.getState()
-    const intervalMs = strategy === 'info_gain' ? 600 : 1200
+    const { strategy, autoPlaySpeed } = useSimulationStore.getState()
+    const baseMs = strategy === 'info_gain' ? 600 : 1200
+    const intervalMs = baseMs / autoPlaySpeed
     store.setStatus('playing')
     autoPlayRef.current = setInterval(() => stepRef.current(), intervalMs)
   }, [store])

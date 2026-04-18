@@ -12,6 +12,7 @@ def _build_registry():
     from .strategies.centroid import CentroidStrategy
     from .strategies.hybrid import HybridStrategy
     from .strategies.info_gain import InfoGainStrategy
+    from .strategies.entropy_gradient import EntropyGradientStrategy
     return {
         "fixed": FixedStrategy,
         "random": RandomStrategy,
@@ -19,6 +20,7 @@ def _build_registry():
         "centroid": CentroidStrategy,
         "hybrid": HybridStrategy,
         "info_gain": InfoGainStrategy,
+        "entropy_gradient": EntropyGradientStrategy,
     }
 
 
@@ -57,7 +59,43 @@ def evaluate(
         results = [run_trial(strategy, env) for _ in range(n_trials)]
 
     weeks = np.array([r.weeks for r in results])
+
+    def _region(lat: float, lon: float) -> str:
+        if lon < -104:
+            return "NW" if lat >= 40 else "SW"
+        elif lon > -80:
+            return "NE" if lat >= 38 else "SE"
+        return "CENTRAL"
     failures = sum(1 for r in results if not r.localized)
+
+    # Build (n_trials, MAX_WEEKS) matrix — pad short trials with their last radius
+    from .simulation import MAX_WEEKS
+    radius_matrix = np.full((len(results), MAX_WEEKS), np.nan)
+    for i, r in enumerate(results):
+        n = len(r.radius_by_week)
+        radius_matrix[i, :n] = r.radius_by_week
+        if n < MAX_WEEKS:
+            radius_matrix[i, n:] = r.radius_by_week[-1] if n > 0 else np.nan
+
+    median_radius_curve = [
+        float(np.nanmedian(radius_matrix[:, w])) for w in range(MAX_WEEKS)
+    ]
+
+    REGIONS = ["NW", "SW", "CENTRAL", "NE", "SE"]
+    regional_stats = {}
+    for region in REGIONS:
+        region_results = [r for r in results if _region(r.box_lat, r.box_lon) == region]
+        if not region_results:
+            regional_stats[region] = None
+            continue
+        rw = np.array([r.weeks for r in region_results])
+        rf = sum(1 for r in region_results if not r.localized)
+        regional_stats[region] = {
+            "n_trials": len(region_results),
+            "failure_rate": rf / len(region_results),
+            "mean": float(np.mean(rw)),
+            "median": float(np.median(rw)),
+        }
 
     return {
         "n_trials": len(results),
@@ -68,4 +106,6 @@ def evaluate(
         "p99": float(np.percentile(weeks, 99)),
         "max": int(np.max(weeks)),
         "failure_rate": failures / len(results),
+        "median_radius_curve": median_radius_curve,
+        "regional_stats": regional_stats,
     }

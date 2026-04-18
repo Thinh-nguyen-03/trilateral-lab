@@ -38,11 +38,12 @@ export const WEEKS_COLORSCALE: [number, string][] = [
   [1.0,  '#8b1a1a'],
 ]
 
-// Bloomberg terminal color palette: amber lead, cyan, green, red, purple
+// Bloomberg terminal color palette: amber, cyan, green, red, purple, teal
 export const BLOOMBERG_COLORS = [
   '#ffab00',
   '#00bcd4',
   '#00e676',
   '#ff3d3d',
   '#b388ff',
+  '#26c6da',
 ]

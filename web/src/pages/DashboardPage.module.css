@@ -153,6 +153,37 @@
   opacity: 0.4;
 }
 
+/* ── Mode filter strip ───────────────────────────────── */
+.modeFilter {
+  display: flex;
+  gap: 4px;
+  padding: 0 0 10px;
+  flex-wrap: wrap;
+}
+
+.modeChip {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.modeChip:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.modeChipActive {
+  border-color: var(--amber);
+  background: rgba(255, 171, 0, 0.08);
+  color: var(--amber);
+}
+
 /* ── Error state ─────────────────────────────────────── */
 .error {
   display: flex;

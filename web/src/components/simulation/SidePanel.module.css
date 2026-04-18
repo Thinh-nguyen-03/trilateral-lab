@@ -94,3 +94,38 @@
 .body {
   padding: 10px 14px 12px;
 }
+
+.shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutKeys {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.kbd {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  padding: 1px 5px;
+  background: transparent;
+  letter-spacing: 0.05em;
+}
+
+.shortcutAction {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}

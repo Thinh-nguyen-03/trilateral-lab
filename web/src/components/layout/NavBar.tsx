@@ -27,6 +27,13 @@ export function NavBar() {
           <span className={styles.dot} />
           SIMULATE
         </NavLink>
+        <NavLink
+          to="/compare"
+          className={({ isActive }) => `${styles.link} ${isActive ? styles.linkCyan : ''}`}
+        >
+          <span className={styles.dot} />
+          COMPARE
+        </NavLink>
       </div>
     </nav>
   )

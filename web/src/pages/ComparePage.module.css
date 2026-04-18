@@ -1,0 +1,167 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--nav-h));
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.bar {
+  height: 38px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  gap: 10px;
+}
+
+.barLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+}
+
+.sep { color: var(--text-muted); }
+
+.coord {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+.regenBtn {
+  background: none;
+  border: 1px solid var(--border-bright);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 1px 6px;
+  transition: all 0.12s;
+  line-height: 1;
+}
+.regenBtn:hover { border-color: var(--green); color: var(--green); }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btnPrimary, .btnSecondary, .btnAmber, .btnGhost {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border: 1px solid;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.btnPrimary {
+  color: var(--bg);
+  background: var(--green);
+  border-color: var(--green);
+}
+.btnPrimary:hover:not(:disabled) { background: #00ff9a; }
+
+.btnSecondary {
+  color: var(--green);
+  border-color: var(--green);
+}
+.btnSecondary:hover:not(:disabled) { background: var(--green-dim); }
+
+.btnAmber {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+.btnAmber:hover { background: var(--amber-dim); }
+
+.btnGhost {
+  color: var(--text-dim);
+  border-color: var(--border-bright);
+}
+.btnGhost:hover { color: var(--red); border-color: var(--red); }
+
+.btnPrimary:disabled, .btnSecondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.configBar {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.configGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.configLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  flex-shrink: 0;
+}
+
+.select {
+  font-family: var(--mono);
+  font-size: 9px;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border-bright);
+  padding: 3px 6px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.configDivider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-bright);
+  flex-shrink: 0;
+}
+
+.maps {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mapDivider {
+  width: 2px;
+  background: var(--border-bright);
+  flex-shrink: 0;
+}

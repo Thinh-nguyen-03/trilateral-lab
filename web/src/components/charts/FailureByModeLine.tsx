@@ -4,11 +4,12 @@ import { STRATEGY_ORDER, MODE_ORDER } from '../../api/results'
 import { DARK_LAYOUT, BLOOMBERG_COLORS, MONO, AXIS } from './chartTheme'
 
 const STRATEGY_LABELS: Record<string, string> = {
-  fixed:          'FIXED',
-  random:         'RANDOM',
-  max_separation: 'MAX-SEP',
-  centroid:       'CENTROID',
-  info_gain:      'INFO-GAIN*',
+  fixed:             'FIXED',
+  random:            'RANDOM',
+  max_separation:    'MAX-SEP',
+  centroid:          'CENTROID',
+  info_gain:         'INFO-GAIN*',
+  entropy_gradient:  'ENTROPY*',
 }
 
 const MODE_LABELS = ['EXACT', 'RND ±10mi', 'RND ±25mi', 'RND ±100mi', 'GAUSS σ5', 'GAUSS σ25']
@@ -32,7 +33,7 @@ export function FailureByModeLine({ rows }: Props) {
       line: {
         color: BLOOMBERG_COLORS[i],
         width: 1.5,
-        dash: strategy === 'info_gain' ? 'dot' : 'solid',
+        dash: (strategy === 'info_gain' || strategy === 'entropy_gradient') ? 'dot' : 'solid',
       },
       marker: { size: 5 },
       customdata: meanW.map((m, j) => [m, p90[j]]),
@@ -77,7 +78,7 @@ export function FailureByModeLine({ rows }: Props) {
         height: 360,
         margin: { l: 58, r: 20, t: 12, b: 60 },
         annotations: [{
-          text: '* Info-Gain: 100 trials/mode (25 for σ=25), dotted line',
+          text: '* Info-Gain / Entropy-Grad: slow strategies (~300ms/step), dotted line',
           xref: 'paper', yref: 'paper', x: 0, y: -0.18,
           showarrow: false,
           font: { size: 11, family: MONO, color: '#a0a0a0' },

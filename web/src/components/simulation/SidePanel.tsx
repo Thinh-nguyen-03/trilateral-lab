@@ -53,7 +53,32 @@ export function SidePanel({ open }: Props) {
         <Accordion title="TELEMETRY" tag="TLM">
           <SimulationPanel />
         </Accordion>
+
+        <Accordion title="SHORTCUTS" tag="KB" defaultOpen={false}>
+          <ShortcutLegend />
+        </Accordion>
       </div>
     </aside>
+  )
+}
+
+function ShortcutLegend() {
+  return (
+    <div className={styles.shortcuts}>
+      <ShortcutRow keys={['SPACE']}   action="Play / Pause" />
+      <ShortcutRow keys={['→']}       action="Step one week" />
+      <ShortcutRow keys={['R']}       action="Reset trial" />
+    </div>
+  )
+}
+
+function ShortcutRow({ keys, action }: { keys: string[]; action: string }) {
+  return (
+    <div className={styles.shortcutRow}>
+      <span className={styles.shortcutKeys}>
+        {keys.map((k) => <kbd key={k} className={styles.kbd}>{k}</kbd>)}
+      </span>
+      <span className={styles.shortcutAction}>{action}</span>
+    </div>
   )
 }

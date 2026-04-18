@@ -210,6 +210,7 @@ export function SimulationMap() {
         feature.geometry.type === 'Point'
           ? (coords as number[])
           : (coords as number[][])[Math.floor((coords as number[][]).length / 2)]
+      if (isNaN(lng) || isNaN(lat)) return
       setHover({
         lng,
         lat,
@@ -250,20 +251,24 @@ export function SimulationMap() {
         onClick={onMapClick}
         cursor={cursor}
       >
-        {/* Belief cloud */}
+        {/* Belief heatmap */}
         <Source id="belief" type="geojson" data={beliefGeoJSON}>
           <Layer
-            id="belief-circles"
-            type="circle"
+            id="belief-heat"
+            type="heatmap"
             paint={{
-              'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 9],
-              'circle-color': [
-                'interpolate', ['linear'], ['get', 'w'],
-                0,   'rgba(255,165,0,0.08)',
-                0.4, 'rgba(255,120,0,0.55)',
-                1,   'rgba(200,20,0,0.9)',
+              'heatmap-weight': ['interpolate', ['linear'], ['get', 'w'], 0, 0, 1, 1],
+              'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 3, 0.8, 8, 2],
+              'heatmap-color': [
+                'interpolate', ['linear'], ['heatmap-density'],
+                0,   'rgba(0,0,0,0)',
+                0.1, 'rgba(255,165,0,0.2)',
+                0.4, 'rgba(255,100,0,0.55)',
+                0.7, 'rgba(220,30,0,0.8)',
+                1,   'rgba(180,0,0,1)',
               ],
-              'circle-blur': 0.5,
+              'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 3, 12, 8, 28],
+              'heatmap-opacity': 0.85,
             }}
           />
         </Source>
@@ -553,7 +558,7 @@ function MapLegend() {
       <div className={styles.legendTitle}>LAYER KEY</div>
       <div className={styles.legendItem}>
         <span className={styles.legendDotBelief} />
-        <span>BELIEF CLOUD</span>
+        <span>BELIEF HEAT</span>
       </div>
       <div className={styles.legendItem}>
         <span className={styles.legendLine} />

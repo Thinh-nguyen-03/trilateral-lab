@@ -7,6 +7,7 @@ const STRATEGY_LABELS: Record<string, string> = {
   max_separation: 'Max-Sep',
   centroid: 'Centroid',
   info_gain: 'Info-Gain*',
+  entropy_gradient: 'Entropy*',
 }
 
 const MODE_LABELS: Record<string, string> = {
@@ -18,7 +19,7 @@ const MODE_LABELS: Record<string, string> = {
   NOISY_GAUSSIAN_25: 'Gaussian σ=25',
 }
 
-export const STRATEGY_ORDER = ['fixed', 'random', 'max_separation', 'centroid', 'info_gain']
+export const STRATEGY_ORDER = ['fixed', 'random', 'max_separation', 'centroid', 'info_gain', 'entropy_gradient']
 export const MODE_ORDER = [
   'EXACT',
   'ROUND_10_MILES',

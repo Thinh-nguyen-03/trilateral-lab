@@ -4,11 +4,12 @@ import { STRATEGY_ORDER, MODE_ORDER } from '../../api/results'
 import { DARK_LAYOUT, MONO, AXIS } from './chartTheme'
 
 const STRATEGY_LABELS: Record<string, string> = {
-  fixed:          'FIXED',
-  random:         'RANDOM',
-  max_separation: 'MAX-SEP',
-  centroid:       'CENTROID',
-  info_gain:      'INFO-GAIN*',
+  fixed:             'FIXED',
+  random:            'RANDOM',
+  max_separation:    'MAX-SEP',
+  centroid:          'CENTROID',
+  info_gain:         'INFO-GAIN*',
+  entropy_gradient:  'ENTROPY*',
 }
 
 const MODE_LABELS = ['EXACT', 'RND ±10mi', 'RND ±25mi', 'RND ±100mi', 'GAUSS σ5', 'GAUSS σ25']
