@@ -23,13 +23,13 @@ export function useSimulation() {
     if (status === 'playing') store.setStatus('running')
   }, [store])
 
-  const step = useCallback(async () => {
+  const step = useCallback(async (location?: { lat: number; lon: number } | null) => {
     const { sessionId } = useSimulationStore.getState()
     if (!sessionId || steppingRef.current) return
     steppingRef.current = true
 
     try {
-      const res = await stepSession(sessionId)
+      const res = await stepSession(sessionId, location)
 
       let grid = null
       let particles = null

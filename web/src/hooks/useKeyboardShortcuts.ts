@@ -7,6 +7,7 @@ interface ShortcutHandlers {
   stopAutoPlay: () => void
   reset: () => void
   status: string
+  strategy: string
 }
 
 export function useKeyboardShortcuts({
@@ -16,17 +17,23 @@ export function useKeyboardShortcuts({
   stopAutoPlay,
   reset,
   status,
+  strategy,
 }: ShortcutHandlers) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
       if (e.target instanceof HTMLElement && e.target.isContentEditable) return
 
+      const isManual = strategy === 'manual'
+
       switch (e.key) {
         case ' ':
           e.preventDefault()
           if (status === 'idle') {
             start()
+          } else if (isManual) {
+            // No auto-play or step for manual — user must click the map
+            return
           } else if (status === 'playing') {
             stopAutoPlay()
           } else if (status === 'running') {
@@ -35,7 +42,7 @@ export function useKeyboardShortcuts({
           break
         case 'ArrowRight':
           e.preventDefault()
-          if (status === 'running') step()
+          if (status === 'running' && !isManual) step()
           break
         case 'r':
         case 'R':
@@ -46,5 +53,5 @@ export function useKeyboardShortcuts({
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [status, start, step, startAutoPlay, stopAutoPlay, reset])
+  }, [status, strategy, start, step, startAutoPlay, stopAutoPlay, reset])
 }

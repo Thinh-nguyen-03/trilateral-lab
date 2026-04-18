@@ -6,9 +6,10 @@ import styles from './StepControls.module.css'
 const SPEED_OPTIONS = [0.5, 1, 2, 4, 8]
 
 export function StepControls() {
-  const { status, autoPlaySpeed, setAutoPlaySpeed } = useSimulationStore()
+  const { status, autoPlaySpeed, setAutoPlaySpeed, strategy } = useSimulationStore()
   const { start, step, startAutoPlay, stopAutoPlay, reset } = useSimulation()
   const [loading, setLoading] = useState(false)
+  const isManual = strategy === 'manual'
 
   const handleStart = async () => {
     setLoading(true)
@@ -34,6 +35,17 @@ export function StepControls() {
     return (
       <div className={styles.wrap}>
         <button className={styles.ghost} onClick={reset}>↺  RESET SYSTEM</button>
+      </div>
+    )
+  }
+
+  if (isManual) {
+    return (
+      <div className={styles.wrap}>
+        <div className={styles.manualHint}>
+          ⊕  CLICK MAP TO MEASURE
+        </div>
+        <button className={`${styles.ghost} ${styles.ghostIcon}`} onClick={reset}>↺</button>
       </div>
     )
   }

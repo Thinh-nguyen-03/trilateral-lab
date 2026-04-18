@@ -113,3 +113,22 @@ button:disabled {
   background: var(--amber-dim);
   color: var(--amber);
 }
+
+.manualHint {
+  flex: 1;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  border: 1px dashed var(--amber);
+  color: var(--amber);
+  text-align: center;
+  background: var(--amber-dim);
+  animation: manualHintPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes manualHintPulse {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}

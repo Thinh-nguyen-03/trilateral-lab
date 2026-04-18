@@ -15,11 +15,11 @@ const STATUS_META: Record<string, { label: string; cls: string }> = {
 
 export function SimulationPage() {
   const [panelOpen, setPanelOpen] = useState(true)
-  const { status, currentStep } = useSimulationStore()
+  const { status, strategy, currentStep } = useSimulationStore()
   const meta = STATUS_META[status] ?? STATUS_META.idle
   const { start, step, startAutoPlay, stopAutoPlay, reset } = useSimulation()
 
-  useKeyboardShortcuts({ start, step, startAutoPlay, stopAutoPlay, reset, status })
+  useKeyboardShortcuts({ start, step, startAutoPlay, stopAutoPlay, reset, status, strategy })
 
   const completeColor =
     status === 'complete'

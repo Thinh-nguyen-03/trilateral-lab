@@ -12,8 +12,14 @@ export async function startSession(
   })
 }
 
-export async function stepSession(sessionId: string): Promise<StepResponse> {
-  return apiFetch<StepResponse>(`/api/session/${sessionId}/step`, { method: 'POST' })
+export async function stepSession(
+  sessionId: string,
+  location?: { lat: number; lon: number } | null,
+): Promise<StepResponse> {
+  return apiFetch<StepResponse>(`/api/session/${sessionId}/step`, {
+    method: 'POST',
+    body: JSON.stringify({ location: location ?? undefined }),
+  })
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {

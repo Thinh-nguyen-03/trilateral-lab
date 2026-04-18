@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import type { MapRef, MapMouseEvent, MapGeoJSONFeature } from 'react-map-gl/maplibre'
 import type { FeatureCollection, Feature, LineString, Point } from 'geojson'
 import { useSimulationStore } from '../../store/simulationStore'
+import { useSimulation } from '../../hooks/useSimulation'
 import { weekColor } from './mapUtils'
 import type { MeasurementModel } from '../../types/api'
 import type { DecodedGrid, DecodedParticles, GridCell } from './mapUtils'
@@ -59,9 +60,10 @@ export function SimulationMap() {
   const {
     currentStep, decodedGrid, decodedParticles,
     boxLocation, previewBoxLocation,
-    boxPlacementMode, status,
+    boxPlacementMode, status, strategy,
     setPreviewBoxLocation,
   } = useSimulationStore()
+  const { step } = useSimulation()
 
   const [hover, setHover] = useState<HoverInfo | null>(null)
   const [mouseCoords, setMouseCoords] = useState<{ lng: number; lat: number } | null>(null)
@@ -196,8 +198,11 @@ export function SimulationMap() {
 
   // ── Cursor mode ───────────────────────────────────────────────────────────
   const isPickMode = boxPlacementMode === 'manual' && status === 'idle'
+  const isManualMeasureMode = strategy === 'manual' && status === 'running'
   const [hoveredFeature, setHoveredFeature] = useState(false)
-  const cursor = isPickMode ? 'crosshair' : (hoveredFeature ? 'crosshair' : 'grab')
+  const cursor = (isPickMode || isManualMeasureMode)
+    ? 'crosshair'
+    : (hoveredFeature ? 'crosshair' : 'grab')
 
   // ── Event handlers ────────────────────────────────────────────────────────
   const onMouseMove = useCallback((e: MapMouseEvent) => {
@@ -229,12 +234,16 @@ export function SimulationMap() {
   }, [])
 
   const onMapClick = useCallback((e: MapMouseEvent) => {
-    // Read store directly — avoids stale closure on isPickMode
-    const { boxPlacementMode: mode, status: s } = useSimulationStore.getState()
+    // Read store directly — avoids stale closure
+    const { boxPlacementMode: mode, status: s, strategy: strat } = useSimulationStore.getState()
     if (mode === 'manual' && s === 'idle') {
       setPreviewBoxLocation({ lat: e.lngLat.lat, lon: e.lngLat.lng })
+      return
     }
-  }, [setPreviewBoxLocation])
+    if (strat === 'manual' && s === 'running') {
+      step({ lat: e.lngLat.lat, lon: e.lngLat.lng })
+    }
+  }, [setPreviewBoxLocation, step])
 
   return (
     <div className={styles.wrap}>
@@ -478,6 +487,16 @@ export function SimulationMap() {
         <div className={styles.pickOverlay}>
           <span className={styles.pickGlyph}>⊕</span>
           <span>CLICK TO PLACE TARGET</span>
+        </div>
+      )}
+
+      {/* Manual-measurement HUD */}
+      {isManualMeasureMode && (
+        <div className={styles.manualHud}>
+          <span className={styles.manualHudGlyph}>⊕</span>
+          <span className={styles.manualHudText}>
+            CLICK MAP TO MEASURE · WEEK {(currentStep?.week ?? 0) + 1}
+          </span>
         </div>
       )}
 

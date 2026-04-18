@@ -3,6 +3,7 @@ import { useSimulationStore, randomConusPoint } from '../../store/simulationStor
 import styles from './StrategyModeForm.module.css'
 
 const STRATEGIES = [
+  { value: 'manual',            label: 'MANUAL  (YOU PICK)' },
   { value: 'fixed',             label: 'FIXED SEQUENCE' },
   { value: 'random',            label: 'RANDOM' },
   { value: 'max_separation',    label: 'MAX-SEPARATION' },
