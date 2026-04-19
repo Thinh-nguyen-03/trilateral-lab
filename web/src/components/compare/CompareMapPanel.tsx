@@ -38,10 +38,15 @@ interface Props {
   slice: CompareSlice
   label: string
   accentColor: string
+  stepIndex?: number
+  targetLocation?: { lat: number; lon: number } | null
 }
 
-export function CompareMapPanel({ slice, label, accentColor }: Props) {
-  const { currentStep, decodedGrid, decodedParticles, boxLocation } = slice
+export function CompareMapPanel({ slice, label, accentColor, stepIndex, targetLocation }: Props) {
+  const historical = stepIndex !== undefined ? slice.history[stepIndex] ?? null : null
+  const { decodedGrid, decodedParticles, boxLocation } = slice
+  const resolvedTarget = targetLocation ?? boxLocation
+  const currentStep = historical ?? slice.currentStep
   const measurements: MeasurementModel[] = currentStep?.measurements ?? []
   const best = currentStep?.best_estimate ?? null
 
@@ -70,6 +75,18 @@ export function CompareMapPanel({ slice, label, accentColor }: Props) {
     }
     return { type: 'FeatureCollection', features: [] }
   }, [decodedGrid, decodedParticles])
+
+  const pathGeoJSON = useMemo((): FeatureCollection => ({
+    type: 'FeatureCollection',
+    features: measurements.length >= 2 ? [{
+      type: 'Feature',
+      geometry: {
+        type: 'LineString',
+        coordinates: measurements.map((m) => [m.location.lon, m.location.lat]),
+      } as LineString,
+      properties: {},
+    } as Feature] : [],
+  }), [measurements])
 
   const ringsGeoJSON = useMemo((): FeatureCollection => ({
     type: 'FeatureCollection',
@@ -102,17 +119,19 @@ export function CompareMapPanel({ slice, label, accentColor }: Props) {
         geometry: { type: 'Point', coordinates: [best.lon, best.lat] } as Point,
         properties: { kind: 'estimate' },
       } as Feature] : []),
-      ...(boxLocation ? [{
+      ...(resolvedTarget ? [{
         type: 'Feature',
-        geometry: { type: 'Point', coordinates: [boxLocation.lon, boxLocation.lat] } as Point,
+        geometry: { type: 'Point', coordinates: [resolvedTarget.lon, resolvedTarget.lat] } as Point,
         properties: { kind: 'box' },
       } as Feature] : []),
     ],
-  }), [best, boxLocation])
+  }), [best, resolvedTarget])
 
   const week  = currentStep?.week ?? 0
   const radius = currentStep?.uncertainty_radius
-  const isLocalized = slice.status === 'complete' && currentStep?.localized
+  const finalStep = slice.history[slice.history.length - 1]
+  const isAtEnd = stepIndex === undefined || stepIndex >= slice.history.length - 1
+  const isLocalized = slice.status === 'complete' && !!finalStep?.localized
 
   return (
     <div className={styles.panel}>
@@ -137,6 +156,7 @@ export function CompareMapPanel({ slice, label, accentColor }: Props) {
           maxZoom={10}
           mapStyle={MAP_STYLE}
           style={{ width: '100%', height: '100%' }}
+          attributionControl={false}
         >
           <Source id="belief" type="geojson" data={beliefGeoJSON}>
             <Layer
@@ -155,6 +175,19 @@ export function CompareMapPanel({ slice, label, accentColor }: Props) {
                 ],
                 'heatmap-radius':  ['interpolate', ['linear'], ['zoom'], 3, 10, 7, 24],
                 'heatmap-opacity': 0.85,
+              }}
+            />
+          </Source>
+
+          <Source id="path" type="geojson" data={pathGeoJSON}>
+            <Layer
+              id="path-line"
+              type="line"
+              paint={{
+                'line-color': accentColor,
+                'line-width': 1,
+                'line-opacity': 0.35,
+                'line-dasharray': [2, 3],
               }}
             />
           </Source>
@@ -198,10 +231,10 @@ export function CompareMapPanel({ slice, label, accentColor }: Props) {
           </Source>
         </Map>
 
-        {slice.status === 'complete' && (
+        {slice.status === 'complete' && isAtEnd && (
           <div className={`${styles.resultBanner} ${isLocalized ? styles.resultBannerGreen : styles.resultBannerRed}`}>
             {isLocalized
-              ? `LOCALIZED  W${currentStep?.week}`
+              ? `LOCALIZED  W${finalStep?.week}`
               : 'TIMEOUT  W52'}
           </div>
         )}

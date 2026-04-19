@@ -89,6 +89,7 @@
 .modeBtnActive {
   color: var(--green) !important;
   border-color: var(--green) !important;
+  border-left: 1px solid var(--green) !important;
   background: var(--green-dim) !important;
 }
 

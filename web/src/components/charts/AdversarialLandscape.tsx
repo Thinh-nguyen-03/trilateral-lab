@@ -48,10 +48,10 @@ export function AdversarialLandscape({ data, strategy, mode }: Props) {
         mode: 'markers+text',
         x: [worst.lon],
         y: [worst.lat],
-        marker: { color: '#ff3d3d', size: 12, symbol: 'x', line: { width: 2 } },
-        text: ['WORST'],
+        marker: { color: '#ff3d3d', size: 14, symbol: 'diamond', line: { color: '#ff8080', width: 1.5 } },
+        text: ['▲ WORST'],
         textposition: 'top center',
-        textfont: { family: MONO, size: 10, color: '#ff3d3d' },
+        textfont: { family: MONO, size: 9, color: '#ff3d3d' },
         hovertemplate:
           `<b>WORST CASE</b><br>` +
           `LAT: %{y}°N<br>LON: %{x}°E<br>` +

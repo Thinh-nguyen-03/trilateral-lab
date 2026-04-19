@@ -36,7 +36,7 @@ export function DashboardPage() {
   if (error) {
     return (
       <div className={styles.error}>
-        <span className={styles.errorIcon}>⚠</span>
+        <span className={styles.errorIcon}>ERR</span>
         <span>DATASTREAM UNAVAILABLE — IS THE API RUNNING?</span>
       </div>
     )

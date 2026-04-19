@@ -29,7 +29,7 @@ export function ConvergenceCurves({ rows, mode, crlb }: Props) {
       return {
         type:   'scatter',
         x:      weeks,
-        y:      row.median_radius_curve,
+        y:      row.median_radius_curve.map((v: number) => Math.max(v, 0.5)),
         name:   STRATEGY_LABELS[strategy] ?? strategy,
         mode:   'lines',
         line: {
@@ -85,6 +85,7 @@ export function ConvergenceCurves({ rows, mode, crlb }: Props) {
         yaxis: {
           title: { text: 'MEDIAN UNCERTAINTY RADIUS (mi)', font: AXIS.titleFont },
           type: 'log',
+          range: [Math.log10(0.4), 3],
           color: AXIS.color,
           gridcolor: AXIS.gridcolor,
           tickfont: AXIS.tickfont,

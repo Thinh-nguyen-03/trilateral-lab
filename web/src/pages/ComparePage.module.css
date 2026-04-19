@@ -6,6 +6,7 @@
   background: var(--bg);
 }
 
+
 .bar {
   height: 38px;
   flex-shrink: 0;
@@ -27,7 +28,7 @@
 }
 
 .title {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.14em;
   color: var(--amber);
@@ -35,11 +36,43 @@
 
 .sep { color: var(--text-muted); }
 
-.coord {
-  font-size: 9px;
+.verdictBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+
+.verdictDelta {
+  font-size: 11px;
+  font-weight: 400;
   color: var(--text-dim);
   letter-spacing: 0.06em;
 }
+
+.coord {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+.adversarialBtn {
+  background: none;
+  border: 1px solid var(--border-bright);
+  color: var(--amber);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  transition: all 0.12s;
+}
+.adversarialBtn:hover { border-color: var(--amber); background: var(--amber-dim); }
 
 .regenBtn {
   background: none;
@@ -124,7 +157,7 @@
 
 .configLabel {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
   flex-shrink: 0;
@@ -132,7 +165,7 @@
 
 .select {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 11px;
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border-bright);
@@ -158,6 +191,7 @@
   display: flex;
   flex: 1;
   overflow: hidden;
+  position: relative;
 }
 
 .mapDivider {
@@ -165,3 +199,306 @@
   background: var(--border-bright);
   flex-shrink: 0;
 }
+
+/* ── Floating result window ── */
+.floatWindow {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border-bright);
+  z-index: 20;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+}
+
+.floatWindowRight {
+  left: auto;
+  right: 20px;
+  transform: none;
+  width: 240px;
+}
+
+/* ── Scoreboard ── */
+.scoreBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.tallyRow {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tallyBlock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0 8px;
+  border-right: 1px solid var(--border);
+}
+.tallyBlock:last-child { border-right: none; }
+
+.tallyNum {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tallyLbl {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  margin-top: 3px;
+  color: var(--text-dim);
+}
+
+.tallyBarWrap {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tallyBar {
+  height: 4px;
+  display: flex;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.raceLog {
+  display: flex;
+  flex-direction: column;
+  max-height: 140px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.raceRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+.raceRow:last-child { border-bottom: none; }
+
+.raceNum {
+  color: var(--text-dim);
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.raceWinner {
+  flex: 1;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.raceWeeks { letter-spacing: 0.04em; }
+
+.raceVs {
+  color: var(--text-muted);
+  font-size: 8px;
+}
+
+.racePending {
+  color: var(--amber);
+  letter-spacing: 0.06em;
+  flex: 1;
+}
+
+.avgRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.avgLabel {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  flex: 1;
+}
+
+.floatHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s;
+}
+.floatHead:hover { background: var(--surface-2); }
+
+.floatArrow {
+  font-size: 8px;
+  color: var(--green);
+  width: 10px;
+}
+
+.floatTitle {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--amber);
+  flex: 1;
+}
+
+.floatWeek {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--green);
+  letter-spacing: 0.06em;
+}
+
+.floatBody {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Chart inside float ── */
+.chartOuter {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0 4px 0;
+}
+
+.chartWrap {
+  position: relative;
+  height: 150px;
+  display: flex;
+  align-items: stretch;
+}
+
+.chartXAxis {
+  position: relative;
+  height: 16px;
+  margin-left: 38px;
+  margin-right: 52px;
+}
+
+.chartXLabel {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 7px;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+}
+
+.chartYAxis {
+  position: relative;
+  width: 38px;
+  flex-shrink: 0;
+}
+
+.chartYUnit {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  font-family: var(--mono);
+  font-size: 7px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em;
+}
+
+.chartYLabel {
+  position: absolute;
+  right: 5px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: rgba(255,255,255,0.8);
+  transform: translateY(50%);
+  white-space: nowrap;
+}
+
+.chartYLabel5 {
+  position: absolute;
+  right: 5px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: rgba(255,80,80,1);
+  transform: translateY(50%);
+}
+
+.chartSvg {
+  flex: 1;
+  min-width: 0;
+  display: block;
+}
+
+.chartLegend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+/* ── Inline scrubber in header bar ── */
+.inlineScrub {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 6px;
+  padding-left: 10px;
+  border-left: 1px solid var(--border-bright);
+}
+
+/* ── Scrub bar (kept for spacing) ── */
+.scrubBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--border);
+}
+
+.scrubLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.06em;
+  width: 32px;
+  flex-shrink: 0;
+}
+
+.scrubber {
+  flex: 1;
+  accent-color: var(--green);
+  cursor: pointer;
+  height: 3px;
+}
+
+.scrubReset {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border-bright);
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: all 0.12s;
+  flex-shrink: 0;
+}
+.scrubReset:hover { color: var(--green); border-color: var(--green); }

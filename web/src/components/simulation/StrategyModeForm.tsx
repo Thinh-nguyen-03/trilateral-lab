@@ -108,7 +108,7 @@ export function StrategyModeForm() {
       </div>
 
       {locked && (
-        <p className={styles.lockNote}>⚠  CONFIG LOCKED — TRIAL IN PROGRESS</p>
+        <p className={styles.lockNote}>CONFIG LOCKED — TRIAL IN PROGRESS</p>
       )}
     </div>
   )

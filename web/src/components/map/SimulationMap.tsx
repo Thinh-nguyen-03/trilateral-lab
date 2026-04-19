@@ -254,6 +254,7 @@ export function SimulationMap() {
         maxZoom={10}
         mapStyle={MAP_STYLE}
         style={{ width: '100%', height: '100%' }}
+        attributionControl={false}
         interactiveLayerIds={INTERACTIVE}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
@@ -485,7 +486,7 @@ export function SimulationMap() {
       {/* Pick-mode overlay instruction */}
       {isPickMode && !activeBox && (
         <div className={styles.pickOverlay}>
-          <span className={styles.pickGlyph}>⊕</span>
+          <span className={styles.pickGlyph}>[+]</span>
           <span>CLICK TO PLACE TARGET</span>
         </div>
       )}
@@ -493,7 +494,7 @@ export function SimulationMap() {
       {/* Manual-measurement HUD */}
       {isManualMeasureMode && (
         <div className={styles.manualHud}>
-          <span className={styles.manualHudGlyph}>⊕</span>
+          <span className={styles.manualHudGlyph}>[+]</span>
           <span className={styles.manualHudText}>
             CLICK MAP TO MEASURE · WEEK {(currentStep?.week ?? 0) + 1}
           </span>

@@ -33,7 +33,7 @@ export function SimulationPanel() {
         </div>
       ) : (
         <div className={styles.await}>
-          <span className={styles.awaitGlyph}>◌</span>
+          <span className={styles.awaitGlyph}>--</span>
           <span>AWAITING TRIAL DATA</span>
         </div>
       )}
@@ -41,7 +41,7 @@ export function SimulationPanel() {
       {/* ── Complete banner ── */}
       {status === 'complete' && (
         <div className={currentStep?.localized ? styles.bannerOk : styles.bannerFail}>
-          <span className={styles.bannerIcon}>{currentStep?.localized ? '●' : '✕'}</span>
+          <span className={styles.bannerIcon}>{currentStep?.localized ? 'OK' : 'XX'}</span>
           <div>
             <div className={styles.bannerMain}>
               {currentStep?.localized

@@ -38,10 +38,10 @@ class EntropyGradientStrategy(Strategy):
             return self._fallback.choose_location(state)
 
         candidates = get_candidates(step=self.candidate_step)
-        best, best_score = None, float("inf")
+        best, best_score = None, float("-inf")
         for c in candidates:
             score = self._expected_entropy(c, w, lats, lons, state.measurement_mode)
-            if score < best_score:
+            if score > best_score:
                 best_score, best = score, c
         return best
 
@@ -79,5 +79,5 @@ class EntropyGradientStrategy(Strategy):
         if total < 1e-10:
             return float("inf")
         group_p = group_w / total
-        # Shannon entropy in nats — minimising this minimises expected posterior uncertainty
+        # Shannon entropy in nats — maximising this maximises information gained from the measurement
         return float(-np.sum(group_p * np.log(group_p + 1e-30)))

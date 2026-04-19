@@ -25,7 +25,7 @@ export function StepControls() {
     return (
       <div className={styles.wrap}>
         <button className={styles.primary} onClick={handleStart} disabled={loading}>
-          {loading ? '■ INITIALIZING...' : '▶ LAUNCH TRIAL'}
+          {loading ? 'INITIALIZING...' : '▶ LAUNCH TRIAL'}
         </button>
       </div>
     )
@@ -43,7 +43,7 @@ export function StepControls() {
     return (
       <div className={styles.wrap}>
         <div className={styles.manualHint}>
-          ⊕  CLICK MAP TO MEASURE
+          CLICK MAP TO MEASURE
         </div>
         <button className={`${styles.ghost} ${styles.ghostIcon}`} onClick={reset}>↺</button>
       </div>
@@ -55,13 +55,13 @@ export function StepControls() {
       <div className={styles.wrap}>
         {status === 'playing' ? (
           <>
-            <button className={styles.amber} onClick={stopAutoPlay}>⏸  PAUSE</button>
+            <button className={styles.amber} onClick={stopAutoPlay}>PAUSE</button>
             <button className={`${styles.ghost} ${styles.ghostIcon}`} onClick={reset}>↺</button>
           </>
         ) : (
           <>
             <button className={styles.secondary} onClick={handleStep} disabled={loading}>
-              {loading ? '■■■' : '▶  STEP'}
+              {loading ? '...' : '▶  STEP'}
             </button>
             <button className={styles.primary} onClick={startAutoPlay} disabled={loading}>
               ▶▶ AUTO-RUN

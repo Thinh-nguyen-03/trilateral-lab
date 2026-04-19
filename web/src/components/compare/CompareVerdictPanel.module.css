@@ -1,0 +1,107 @@
+.col {
+  width: 200px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border-bright);
+  border-right: 1px solid var(--border-bright);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Winner */
+.winner {
+  flex-shrink: 0;
+  padding: 14px 12px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.winnerLabel {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.delta {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.tied {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+/* Sparkline */
+.spark {
+  flex: 1;
+  min-height: 0;
+  padding: 10px 10px 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Stats */
+.stats {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.statRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.statLabel {
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.statVals {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.statVal {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.statVs {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-muted);
+}
+
+/* Legend */
+.legend {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 7px 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
