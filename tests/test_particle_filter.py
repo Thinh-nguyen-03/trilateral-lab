@@ -51,6 +51,7 @@ def test_mass_concentrates_near_box_gaussian():
 
 
 def test_best_estimate_approaches_box():
+    np.random.seed(42)
     from src.environment import haversine
     box = Point(39.0, -98.0)
     observers = [Point(47.6, -122.3), Point(25.8, -80.2), Point(41.8, -87.6)]
