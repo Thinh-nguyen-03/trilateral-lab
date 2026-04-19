@@ -11,10 +11,10 @@ is deliberately easy → hard so there's always a shippable milestone.
 
 | # | Feature | Status | Scope |
 |---|---------|--------|-------|
-| N1 | [Play-It-Yourself Mode](#n1-play-it-yourself-mode) | `in-progress` | UI + small API tweak |
-| N2 | [Adversarial Box Placement](#n2-adversarial-box-placement) | `pending` | Backend + analysis |
-| N3 | [CRLB Overlay](#n3-crlb-overlay) | `pending` | Backend + chart |
-| N4 | [RL-Trained Strategy](#n4-rl-trained-strategy) | `pending` | Training infra + new strategy |
+| N1 | [Play-It-Yourself Mode](#n1-play-it-yourself-mode) | `complete` | UI + small API tweak |
+| N2 | [Adversarial Box Placement](#n2-adversarial-box-placement) | `complete` | Minimax sweep + landscape chart |
+| N3 | [CRLB Overlay](#n3-crlb-overlay) | `complete` | Fisher-info floor on convergence chart |
+| N4 | [RL-Trained Strategy](#n4-rl-trained-strategy) | `complete` | Pure-numpy CEM, no torch dep |
 
 **Status values:** `pending` → `in-progress` → `complete` → `blocked`
 
@@ -204,6 +204,19 @@ Tests:
 - Multi-mode policy (condition on measurement mode as part of observation)
 - Imitation-learn from `info_gain` first, then fine-tune with RL (much faster
   convergence)
+
+---
+
+## Build notes (post-hoc)
+
+- **N2** excludes `info_gain` from the adversarial sweep — its O(n_candidates * n_cells)
+  cost makes a full-grid K-trial sweep intractable in-process. The four
+  remaining strategies still give a meaningful minimax picture.
+- **N4** uses Cross-Entropy Method (gradient-free, pure numpy) rather than PPO+sb3
+  as originally scoped. Keeps the repo torch-free and still ships a genuinely
+  learned policy. CEM is a legitimate RL method — see Mannor, Rubinstein &
+  Gat (2003) and the original "Learning Tetris using the Noisy Cross-Entropy
+  Method" application.
 
 ---
 
