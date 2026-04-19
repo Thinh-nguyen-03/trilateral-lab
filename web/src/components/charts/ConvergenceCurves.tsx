@@ -15,9 +15,10 @@ const STRATEGY_LABELS: Record<string, string> = {
 interface Props {
   rows: ResultRow[]
   mode: string
+  crlb?: number[]  // CRLB radius per week for the selected mode (miles), if available
 }
 
-export function ConvergenceCurves({ rows, mode }: Props) {
+export function ConvergenceCurves({ rows, mode, crlb }: Props) {
   const subset = rows.filter((r) => r.mode === mode && r.median_radius_curve)
   const weeks  = Array.from({ length: 52 }, (_, i) => i + 1)
 
@@ -41,10 +42,24 @@ export function ConvergenceCurves({ rows, mode }: Props) {
     })
     .filter((t): t is Plotly.Data => t !== null)
 
+  // CRLB trace — skip week 1 (singular, infinite) so the log scale doesn't blow out.
+  const crlbTrace: Plotly.Data | null = crlb && crlb.length >= 2
+    ? {
+        type:   'scatter',
+        x:      weeks.slice(1),
+        y:      crlb.slice(1),
+        name:   'CRLB (floor)',
+        mode:   'lines',
+        line:   { color: '#ffffff', width: 1.4, dash: 'dash' },
+        hovertemplate: `<b>CRLB</b><br>W%{x}: %{y:.1f} mi<extra></extra>`,
+      } as Plotly.Data
+    : null
+
   return (
     <Plot
       data={[
         ...traces,
+        ...(crlbTrace ? [crlbTrace] : []),
         // 5-mile localization threshold reference line
         {
           type:  'scatter',

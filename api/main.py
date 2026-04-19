@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .session_store import SessionStore
-from .routes import adversarial, results, session, static_data
+from .routes import adversarial, crlb, results, session, static_data
 
 store = SessionStore(ttl_minutes=30)
 
@@ -32,6 +32,7 @@ app.include_router(results.router, prefix="/api")
 app.include_router(session.router, prefix="/api")
 app.include_router(static_data.router, prefix="/api")
 app.include_router(adversarial.router, prefix="/api")
+app.include_router(crlb.router, prefix="/api")
 
 # Serve the React build in production.
 # Only mounted if web/dist exists (i.e. after `npm run build`).

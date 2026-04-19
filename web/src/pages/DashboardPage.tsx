@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useResults } from '../hooks/useResults'
 import { useAdversarial } from '../hooks/useAdversarial'
+import { useCrlb } from '../hooks/useCrlb'
 import { ChartContainer } from '../components/charts/ChartContainer'
 import { FailureHeatmap } from '../components/charts/FailureHeatmap'
 import { MeanWeeksHeatmap } from '../components/charts/MeanWeeksHeatmap'
@@ -25,6 +26,7 @@ const CONVERGENCE_MODES = [
 export function DashboardPage() {
   const { data: rows, isLoading, error } = useResults()
   const { data: adv, error: advError } = useAdversarial()
+  const { data: crlb } = useCrlb()
   const [convergenceMode, setConvergenceMode] = useState('EXACT')
   const [regionalMode, setRegionalMode] = useState('EXACT')
   const [thresholdMode, setThresholdMode] = useState('EXACT')
@@ -162,12 +164,22 @@ export function DashboardPage() {
           </div>
           <ChartContainer
             title="Median uncertainty radius over time"
-            subtitle="How quickly each strategy narrows down the target. Log scale — 5 mi threshold marks localization."
+            subtitle={
+              crlb && crlb.curves[convergenceMode]
+                ? 'Dashed white line is the Cramér-Rao lower bound — the information-theoretic floor for this mode.'
+                : 'How quickly each strategy narrows down the target. Log scale — 5 mi threshold marks localization.'
+            }
             tag="CURVE"
             isLoading={isLoading}
             height={340}
           >
-            {rows && <ConvergenceCurves rows={rows} mode={convergenceMode} />}
+            {rows && (
+              <ConvergenceCurves
+                rows={rows}
+                mode={convergenceMode}
+                crlb={crlb?.curves[convergenceMode]}
+              />
+            )}
           </ChartContainer>
         </div>
       </div>
