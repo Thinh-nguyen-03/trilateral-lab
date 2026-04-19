@@ -72,7 +72,7 @@ class StepResponse(BaseModel):
     box_location: Optional[PointModel] = None  # revealed only when trial_complete
 
 
-VALID_STRATEGIES = {"fixed", "random", "max_separation", "centroid", "info_gain", "entropy_gradient", "manual"}
+VALID_STRATEGIES = {"fixed", "random", "max_separation", "centroid", "info_gain", "entropy_gradient", "learned", "manual"}
 VALID_MODES = {
     "EXACT",
     "ROUND_10_MILES",

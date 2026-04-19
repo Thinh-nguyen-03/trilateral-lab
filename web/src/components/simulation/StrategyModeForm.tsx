@@ -10,6 +10,7 @@ const STRATEGIES = [
   { value: 'centroid',          label: 'CENTROID' },
   { value: 'info_gain',         label: 'INFO-GAIN  [~300ms]' },
   { value: 'entropy_gradient',  label: 'ENTROPY-GRAD  [~300ms]' },
+  { value: 'learned',           label: 'LEARNED  (CEM-trained)' },
 ]
 
 const MODES = [

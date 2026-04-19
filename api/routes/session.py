@@ -73,7 +73,10 @@ async def start_session(req: StartSessionRequest, store=Depends(_get_store)):
         else GridBelief(req.measurement_mode)
     )
 
-    strategy = _build_strategy(req.strategy)
+    try:
+        strategy = _build_strategy(req.strategy)
+    except FileNotFoundError as e:
+        raise HTTPException(400, str(e))
     strategy.reset()
 
     state = SearchState(
