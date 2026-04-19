@@ -41,7 +41,10 @@ LON_MIN, LON_MAX = -122.0, -72.0
 LAT_STEP = 4.0
 LON_STEP = 10.0
 
-STRATEGIES = ["fixed", "random", "max_separation", "centroid", "info_gain"]
+# info_gain is excluded: its O(n_candidates * n_cells) cost per step makes a
+# K-trial sweep across a full CONUS grid intractable in-process. max_separation,
+# centroid, and random still give a meaningful minimax picture.
+STRATEGIES = ["fixed", "random", "max_separation", "centroid"]
 MODES = [
     "EXACT",
     "ROUND_25_MILES",
