@@ -22,9 +22,10 @@ class TrialResult:
     box_lon: float = 0.0
 
 
-def run_trial(strategy: Strategy, env: Environment) -> TrialResult:
+def run_trial(strategy: Strategy, env: Environment, box=None) -> TrialResult:
     strategy.reset()
-    box = env.sample_box_location()
+    if box is None:
+        box = env.sample_box_location()
 
     if env.measurement_mode in _GAUSSIAN_MODES:
         belief = ParticleFilter(env.measurement_mode)

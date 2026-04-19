@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useResults } from '../hooks/useResults'
+import { useAdversarial } from '../hooks/useAdversarial'
 import { ChartContainer } from '../components/charts/ChartContainer'
 import { FailureHeatmap } from '../components/charts/FailureHeatmap'
 import { MeanWeeksHeatmap } from '../components/charts/MeanWeeksHeatmap'
@@ -9,6 +10,7 @@ import { MedianP90Heatmap } from '../components/charts/MedianP90Heatmap'
 import { ConvergenceCurves } from '../components/charts/ConvergenceCurves'
 import { RegionalBreakdownBar } from '../components/charts/RegionalBreakdownBar'
 import { ThresholdSensitivityChart } from '../components/charts/ThresholdSensitivityChart'
+import { AdversarialLandscape } from '../components/charts/AdversarialLandscape'
 import styles from './DashboardPage.module.css'
 
 const CONVERGENCE_MODES = [
@@ -22,9 +24,12 @@ const CONVERGENCE_MODES = [
 
 export function DashboardPage() {
   const { data: rows, isLoading, error } = useResults()
+  const { data: adv, error: advError } = useAdversarial()
   const [convergenceMode, setConvergenceMode] = useState('EXACT')
   const [regionalMode, setRegionalMode] = useState('EXACT')
   const [thresholdMode, setThresholdMode] = useState('EXACT')
+  const [advStrategy, setAdvStrategy] = useState('max_separation')
+  const [advMode, setAdvMode] = useState('ROUND_100_MILES')
 
   if (error) {
     return (
@@ -230,6 +235,61 @@ export function DashboardPage() {
           </ChartContainer>
         </div>
       </div>
+
+      {/* ── Section 07 – Adversarial placement ── */}
+      {adv && (
+        <>
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionNum}>07</span>
+            <span className={styles.sectionTitle}>ADVERSARIAL LANDSCAPE — MINIMAX VIEW</span>
+            <div className={styles.sectionRule} />
+          </div>
+
+          <div className={styles.grid}>
+            <div className={styles.wide}>
+              <div className={styles.modeFilter}>
+                {adv.strategies.map((s) => (
+                  <button
+                    key={s}
+                    className={`${styles.modeChip} ${advStrategy === s ? styles.modeChipActive : ''}`}
+                    onClick={() => setAdvStrategy(s)}
+                  >
+                    {s.replace('_', '-').toUpperCase()}
+                  </button>
+                ))}
+                <span className={styles.modeChipSep}>│</span>
+                {adv.modes.map((m) => (
+                  <button
+                    key={m}
+                    className={`${styles.modeChip} ${advMode === m ? styles.modeChipActive : ''}`}
+                    onClick={() => setAdvMode(m)}
+                  >
+                    {m.replace(/_MILES$/, 'mi').replace('NOISY_GAUSSIAN_', 'σ')}
+                  </button>
+                ))}
+              </div>
+              <ChartContainer
+                title="Mean weeks when box is pinned at each location"
+                subtitle={
+                  `K=${adv.k_trials_per_cell} trials per cell. The X marks the worst-case box — ` +
+                  `where this strategy performs worst given a fixed target.`
+                }
+                tag="MINIMAX"
+                height={380}
+              >
+                <AdversarialLandscape data={adv} strategy={advStrategy} mode={advMode} />
+              </ChartContainer>
+            </div>
+          </div>
+        </>
+      )}
+
+      {!adv && advError && (
+        <div className={styles.advHint}>
+          <span>ADVERSARIAL DATA UNAVAILABLE — RUN </span>
+          <code className={styles.advCode}>python scripts/adversarial_placement.py</code>
+        </div>
+      )}
 
       <div className={styles.footer}>
         <span>TRI·LAT INTEL LAB</span>
