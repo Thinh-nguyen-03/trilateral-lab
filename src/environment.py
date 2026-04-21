@@ -60,7 +60,6 @@ def _point_in_polygon(lat: float, lon: float, polygon: list) -> bool:
 def _in_continental_us(lat: float, lon: float) -> bool:
     geo = _load_boundary()
     if geo is None:
-        # Bounding box fallback when GeoJSON isn't present, includes some ocean cells
         return 24.5 <= lat <= 49.5 and -124.7 <= lon <= -66.9
     for feature in geo["features"]:
         geom = feature["geometry"]
@@ -76,7 +75,6 @@ def _in_continental_us(lat: float, lon: float) -> bool:
 
 
 def sample_box_location() -> Point:
-    # Bounding box for continental US
     lat_min, lat_max = 24.5, 49.5
     lon_min, lon_max = -124.7, -66.9
     while True:

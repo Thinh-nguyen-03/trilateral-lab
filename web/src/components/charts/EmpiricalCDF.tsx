@@ -15,61 +15,56 @@ const STRATEGY_LABELS: Record<string, string> = {
 interface Props {
   rows: ResultRow[]
   mode: string
-  crlb?: number[]  // CRLB radius per week for the selected mode (miles), if available
 }
 
-export function ConvergenceCurves({ rows, mode, crlb }: Props) {
-  const subset = rows.filter((r) => r.mode === mode && r.median_radius_curve)
-  const weeks  = Array.from({ length: 52 }, (_, i) => i + 1)
+export function EmpiricalCDF({ rows, mode }: Props) {
+  const subset = rows.filter((r) => r.mode === mode && r.cdf_curve)
+
+  if (subset.length === 0) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 320,
+        fontFamily: MONO,
+        fontSize: 11,
+        letterSpacing: '0.18em',
+        color: '#888',
+        padding: '0 32px',
+        textAlign: 'center',
+      }}>
+        CDF DATA UNAVAILABLE — RE-RUN <code style={{ color: '#ffab00', marginLeft: 6 }}>python scripts/save_results.py</code>
+      </div>
+    )
+  }
+
+  const weeks = Array.from({ length: subset[0].cdf_curve!.length }, (_, i) => i + 1)
 
   const traces: Plotly.Data[] = STRATEGY_ORDER
     .map((strategy, i) => {
       const row = subset.find((r) => r.strategy === strategy)
-      if (!row?.median_radius_curve) return null
+      if (!row?.cdf_curve) return null
       return {
-        type:   'scatter',
-        x:      weeks,
-        y:      row.median_radius_curve.map((v: number) => Math.max(v, 0.5)),
-        name:   STRATEGY_LABELS[strategy] ?? strategy,
-        mode:   'lines',
+        type: 'scatter',
+        x: weeks,
+        y: row.cdf_curve,
+        name: STRATEGY_LABELS[strategy] ?? strategy,
+        mode: 'lines',
         line: {
           color: BLOOMBERG_COLORS[i],
-          width: 1.5,
+          width: 1.7,
+          shape: 'hv',
           dash: (strategy === 'info_gain' || strategy === 'entropy_gradient') ? 'dot' : 'solid',
         },
-        hovertemplate: `<b>${STRATEGY_LABELS[strategy] ?? strategy}</b><br>W%{x}: %{y:.1f} mi<extra></extra>`,
+        hovertemplate: `<b>${STRATEGY_LABELS[strategy] ?? strategy}</b><br>By W%{x}: %{y:.1%} localized<extra></extra>`,
       } as Plotly.Data
     })
     .filter((t): t is Plotly.Data => t !== null)
 
-  const crlbTrace: Plotly.Data | null = crlb && crlb.length >= 2
-    ? {
-        type:   'scatter',
-        x:      weeks.slice(1),
-        y:      crlb.slice(1),
-        name:   'CRLB (floor)',
-        mode:   'lines',
-        line:   { color: '#ffffff', width: 1.4, dash: 'dash' },
-        hovertemplate: `<b>CRLB</b><br>W%{x}: %{y:.1f} mi<extra></extra>`,
-      } as Plotly.Data
-    : null
-
   return (
     <Plot
-      data={[
-        ...traces,
-        ...(crlbTrace ? [crlbTrace] : []),
-        {
-          type:  'scatter',
-          x:     [1, 52],
-          y:     [5, 5],
-          name:  '5 mi threshold',
-          mode:  'lines',
-          line:  { color: 'rgba(255,61,61,0.5)', width: 1, dash: 'dot' },
-          hoverinfo: 'skip',
-          showlegend: false,
-        } as Plotly.Data,
-      ]}
+      data={traces}
       layout={{
         ...DARK_LAYOUT,
         xaxis: {
@@ -81,12 +76,12 @@ export function ConvergenceCurves({ rows, mode, crlb }: Props) {
           ticks: '',
         },
         yaxis: {
-          title: { text: 'MEDIAN UNCERTAINTY RADIUS (mi)', font: AXIS.titleFont },
-          type: 'log',
-          range: [Math.log10(0.4), 3],
+          title: { text: 'P(LOCALIZED BY WEEK)', font: AXIS.titleFont },
+          range: [0, 1.02],
           color: AXIS.color,
           gridcolor: AXIS.gridcolor,
           tickfont: AXIS.tickfont,
+          tickformat: '.0%',
           ticks: '',
         },
         legend: {
@@ -95,7 +90,7 @@ export function ConvergenceCurves({ rows, mode, crlb }: Props) {
           bordercolor: '#333',
           borderwidth: 1,
           x: 1, xanchor: 'right',
-          y: 1, yanchor: 'top',
+          y: 0, yanchor: 'bottom',
         },
         hovermode: 'x unified',
         height: 340,

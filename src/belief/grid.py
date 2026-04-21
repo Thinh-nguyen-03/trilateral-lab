@@ -18,7 +18,6 @@ class GridBelief(Belief):
         self.lon_grid, self.lat_grid = np.meshgrid(lons, lats)
         self.shape = self.lat_grid.shape
 
-        # Uniform initial weights
         self.weights = np.ones(self.shape, dtype=np.float64)
         self.weights /= self.weights.sum()
 
@@ -27,7 +26,6 @@ class GridBelief(Belief):
         mode = self.measurement_mode
 
         if mode == "EXACT":
-            # Half a grid cell in miles, approximate
             cell_width = GRID_STEP * 69.0 * 0.5
             mask = np.abs(dists - observed_distance) <= cell_width
             self.weights *= mask
@@ -45,7 +43,6 @@ class GridBelief(Belief):
 
         total = self.weights.sum()
         if total == 0:
-            # All cells eliminated; reset to uniform
             self.weights = np.ones(self.shape, dtype=np.float64)
             total = self.weights.sum()
         self.weights /= total
@@ -66,3 +63,40 @@ class GridBelief(Belief):
         cumsum = np.cumsum(flat_weights[order])
         idx = np.searchsorted(cumsum, 0.95)
         return float(flat_dists[order[idx]])
+
+    def covariance_ellipse(self):
+        return _ellipse_from_weighted_points(
+            self.lat_grid.ravel(), self.lon_grid.ravel(), self.weights.ravel()
+        )
+
+
+def _ellipse_from_weighted_points(lats: np.ndarray, lons: np.ndarray, weights: np.ndarray):
+    total = float(weights.sum())
+    if total <= 0:
+        return None
+    w = weights / total
+    mu_lat = float(np.dot(w, lats))
+    mu_lon = float(np.dot(w, lons))
+
+    cos_lat = np.cos(np.radians(mu_lat))
+    y = (lats - mu_lat) * 69.0
+    x = (lons - mu_lon) * 69.0 * cos_lat
+
+    cov = np.array([
+        [float(np.sum(w * x * x)), float(np.sum(w * x * y))],
+        [float(np.sum(w * x * y)), float(np.sum(w * y * y))],
+    ])
+    eig_vals, eig_vecs = np.linalg.eigh(cov)
+    eig_vals = np.clip(eig_vals, 0.0, None)
+
+    # 95% confidence: chi-square scaling for 2 dof
+    chi2_scale = 2.4477
+    semi_major = float(np.sqrt(eig_vals[1]) * chi2_scale)
+    semi_minor = float(np.sqrt(eig_vals[0]) * chi2_scale)
+
+    major_vec = eig_vecs[:, 1]
+    angle_deg = float(np.degrees(np.arctan2(major_vec[1], major_vec[0])))
+
+    if not np.isfinite(semi_major) or not np.isfinite(semi_minor):
+        return None
+    return mu_lat, mu_lon, semi_major, semi_minor, angle_deg

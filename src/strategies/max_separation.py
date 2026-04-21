@@ -5,7 +5,6 @@ from ..types import Point, SearchState
 from .base import Strategy
 from .candidates import get_candidates
 
-# Pre-cached as numpy arrays per step size
 _candidate_arrays: dict[float, tuple[np.ndarray, np.ndarray, list[Point]]] = {}
 
 
@@ -26,9 +25,6 @@ class MaxSeparationStrategy(Strategy):
         if not previous:
             return Point(47.6, -122.3)  # Seattle
 
-        # For each candidate, compute distance to every previous measurement,
-        # take the min, then pick the candidate with the highest min-distance.
-        # Shape: (n_candidates, n_previous)
         min_dists = np.full(len(pts), np.inf)
         for prev in previous:
             d = haversine_vec(prev.lat, prev.lon, lats, lons)

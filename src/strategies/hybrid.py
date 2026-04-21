@@ -3,8 +3,6 @@ from .base import Strategy
 from .max_separation import MaxSeparationStrategy
 from .centroid import CentroidStrategy
 
-# Switch from max-separation to centroid once the belief is tight enough
-# that best_estimate is a reliable measurement target.
 _SWITCH_RADIUS_MILES = 100
 
 

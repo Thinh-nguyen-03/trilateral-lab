@@ -7,6 +7,6 @@ export function useAdversarial() {
     queryFn: fetchAdversarial,
     staleTime: Infinity,
     gcTime: Infinity,
-    retry: false,  // 404 means the user hasn't run the script; don't hammer
+    retry: false,
   })
 }

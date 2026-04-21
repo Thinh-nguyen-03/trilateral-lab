@@ -12,7 +12,6 @@ class ParticleFilter(Belief):
     def __init__(self, measurement_mode: str, n_particles: int = 10000):
         self.measurement_mode = measurement_mode
         self.n = n_particles
-        # Initialize uniformly over the bounding box; offshore particles get low likelihood after the first update
         self.lats = np.random.uniform(LAT_MIN, LAT_MAX, n_particles)
         self.lons = np.random.uniform(LON_MIN, LON_MAX, n_particles)
         self.weights = np.ones(n_particles) / n_particles
@@ -68,3 +67,7 @@ class ParticleFilter(Belief):
         cumsum = np.cumsum(self.weights[order])
         idx = np.searchsorted(cumsum, 0.95)
         return float(dists[order[min(idx, self.n - 1)]])
+
+    def covariance_ellipse(self):
+        from .grid import _ellipse_from_weighted_points
+        return _ellipse_from_weighted_points(self.lats, self.lons, self.weights)

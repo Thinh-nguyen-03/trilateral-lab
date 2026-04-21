@@ -36,6 +36,50 @@ def _run(args):
     return name, mode, evaluate(name, mode, n)
 
 
+def _bootstrap_ci(values, n_boot: int = 2000, ci: float = 0.95, seed: int = 0):
+    """Bootstrap a (lo, hi) CI on the *mean* of the values.
+
+    Uses a fixed seed so saved results are deterministic across runs.
+    Returns (lo, hi) — both floats — at the requested confidence level.
+    """
+    import numpy as np
+
+    arr = np.asarray(values, dtype=float)
+    rng = np.random.default_rng(seed)
+    boots = np.empty(n_boot, dtype=float)
+    for i in range(n_boot):
+        sample = rng.choice(arr, size=arr.size, replace=True)
+        boots[i] = sample.mean()
+    alpha = (1.0 - ci) / 2.0
+    lo = float(np.percentile(boots, alpha * 100))
+    hi = float(np.percentile(boots, (1.0 - alpha) * 100))
+    return lo, hi
+
+
+def _empirical_cdf(weeks: list[int], horizon: int = 52) -> list[float]:
+    """Returns the empirical CDF of weeks-to-localize at integer weeks 1..horizon.
+
+    cdf[w-1] = fraction of trials that *localized* by week w (timed-out trials
+    never contribute, so the curve asymptotes at (1 - failure_rate)).
+    """
+    import numpy as np
+
+    arr = np.asarray(weeks, dtype=int)
+    n = arr.size
+    out = []
+    for w in range(1, horizon + 1):
+        # Timed-out trials have weeks == MAX_WEEKS (52). We must exclude them
+        # from the count at w == horizon, otherwise the CDF would jump to 1.0
+        # at week 52 even for strategies with high failure rates.
+        from src.simulation import MAX_WEEKS
+        if w >= MAX_WEEKS:
+            count = int(((arr <= w) & (arr < MAX_WEEKS)).sum())
+        else:
+            count = int((arr <= w).sum())
+        out.append(count / n if n else 0.0)
+    return out
+
+
 def _compute_threshold_stats(results: list, thresholds: list[float]) -> dict:
     """For each threshold, recompute failure_rate and mean from per-trial radius curves."""
     import numpy as np
@@ -134,6 +178,14 @@ def main():
 
             threshold_stats = _compute_threshold_stats(results, THRESHOLD_MILES)
 
+            # F-B — bootstrap CI on mean weeks + on failure rate
+            mean_lo, mean_hi = _bootstrap_ci(weeks.tolist(), seed=hash((name, mode, "mean")) & 0xFFFF)
+            failed_flags = [0 if r.localized else 1 for r in results]
+            fail_lo, fail_hi = _bootstrap_ci(failed_flags, seed=hash((name, mode, "fail")) & 0xFFFF)
+
+            # F-B — empirical CDF of weeks-to-localize
+            cdf_curve = _empirical_cdf(weeks.tolist())
+
             raw[f"{name}|{mode}"] = {
                 "n_trials": len(results),
                 "mean": float(np.mean(weeks)),
@@ -146,6 +198,9 @@ def main():
                 "median_radius_curve": median_radius_curve,
                 "regional_stats": regional_stats,
                 "threshold_stats": threshold_stats,
+                "mean_ci": [mean_lo, mean_hi],
+                "failure_rate_ci": [fail_lo, fail_hi],
+                "cdf_curve": cdf_curve,
             }
             print(f"  done: {name} / {mode}", flush=True)
 

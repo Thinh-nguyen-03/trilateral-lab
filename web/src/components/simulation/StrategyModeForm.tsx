@@ -8,6 +8,7 @@ const STRATEGIES = [
   { value: 'random',            label: 'RANDOM' },
   { value: 'max_separation',    label: 'MAX-SEPARATION' },
   { value: 'centroid',          label: 'CENTROID' },
+  { value: 'adaptive',          label: 'ADAPTIVE  (EXPLORE / EXPLOIT)' },
   { value: 'info_gain',         label: 'INFO-GAIN  [~300ms]' },
   { value: 'entropy_gradient',  label: 'ENTROPY-GRAD  [~300ms]' },
   { value: 'learned',           label: 'LEARNED  (CEM-trained)' },
@@ -41,7 +42,6 @@ export function StrategyModeForm() {
 
   const switchToManual = useCallback(() => {
     setBoxPlacementMode('manual')
-    // Keep existing previewBoxLocation — pin stays on map, user can click to move it
   }, [setBoxPlacementMode])
 
   const coordText = previewBoxLocation

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { GridMeta, PointModel, StepResponse } from '../types/api'
 import type { DecodedGrid, DecodedParticles } from '../components/map/mapUtils'
+import type { GainPoint } from '../api/session'
 
 export type SimStatus = 'idle' | 'running' | 'playing' | 'complete'
 export type BoxPlacementMode = 'random' | 'manual'
@@ -8,8 +9,8 @@ export type BoxPlacementMode = 'random' | 'manual'
 /** Generate a random point inside the CONUS bounding box. */
 export function randomConusPoint(): PointModel {
   return {
-    lat: 25.5 + Math.random() * 22.5,  // 25.5 – 48°N
-    lon: -124 + Math.random() * 57,     // 124 – 67°W
+    lat: 25.5 + Math.random() * 22.5,
+    lon: -124 + Math.random() * 57,
   }
 }
 
@@ -24,8 +25,8 @@ interface SimulationState {
   status: SimStatus
   history: StepResponse[]
   currentStep: StepResponse | null
-  boxLocation: PointModel | null        // confirmed at trial complete
-  previewBoxLocation: PointModel        // always set — shown on map before sim starts
+  boxLocation: PointModel | null
+  previewBoxLocation: PointModel
   boxPlacementMode: BoxPlacementMode
 
   // Decoded belief for rendering
@@ -34,6 +35,17 @@ interface SimulationState {
 
   // Auto-play speed multiplier: 0.5 | 1 | 2 | 4 | 8
   autoPlaySpeed: number
+
+  // F-A: information-gain heatmap overlay
+  gainMapEnabled: boolean
+  gainMapPoints: GainPoint[] | null
+  gainMapStale: boolean
+
+  // F-H: 3D belief surface
+  view3D: boolean
+
+  // F-N: covariance ellipse overlay
+  ellipseEnabled: boolean
 
   // Actions
   setStrategy: (s: string) => void
@@ -45,6 +57,11 @@ interface SimulationState {
   setStatus: (s: SimStatus) => void
   addStep: (step: StepResponse, grid: DecodedGrid | null, particles: DecodedParticles | null) => void
   setComplete: (boxLocation: PointModel) => void
+  setGainMapEnabled: (b: boolean) => void
+  setGainMapPoints: (p: GainPoint[] | null) => void
+  setGainMapStale: (b: boolean) => void
+  setView3D: (b: boolean) => void
+  setEllipseEnabled: (b: boolean) => void
   reset: () => void
 }
 
@@ -68,6 +85,11 @@ export const useSimulationStore = create<SimulationState>((set) => ({
   measurementMode:  'ROUND_25_MILES',
   boxPlacementMode: 'random',
   autoPlaySpeed:    1,
+  gainMapEnabled:   false,
+  gainMapPoints:    null,
+  gainMapStale:     false,
+  view3D:           false,
+  ellipseEnabled:   false,
 
   setStrategy:           (strategy)           => set({ strategy }),
   setMeasurementMode:    (measurementMode)     => set({ measurementMode }),
@@ -83,7 +105,6 @@ export const useSimulationStore = create<SimulationState>((set) => ({
       history:            [],
       currentStep:        null,
       boxLocation:        null,
-      // Fall back to existing preview if backend somehow omits box_location
       previewBoxLocation: boxLocation ?? state.previewBoxLocation,
       decodedGrid:        null,
       decodedParticles:   null,
@@ -97,10 +118,23 @@ export const useSimulationStore = create<SimulationState>((set) => ({
       history:         [...s.history, step],
       decodedGrid:     grid,
       decodedParticles: particles,
+      gainMapStale:    s.gainMapEnabled ? true : s.gainMapStale,
     })),
 
   setComplete: (boxLocation) => set({ boxLocation, status: 'complete' }),
 
-  // Reset regenerates a fresh random preview location
-  reset: () => set({ ...makeInitial() }),
+  setGainMapEnabled: (gainMapEnabled) => set({ gainMapEnabled }),
+  setGainMapPoints:  (gainMapPoints)  => set({ gainMapPoints, gainMapStale: false }),
+  setGainMapStale:   (gainMapStale)   => set({ gainMapStale }),
+  setView3D:         (view3D)         => set({ view3D }),
+  setEllipseEnabled: (ellipseEnabled) => set({ ellipseEnabled }),
+
+  reset: () => set((s) => ({
+    ...makeInitial(),
+    gainMapEnabled: s.gainMapEnabled,
+    gainMapPoints:  null,
+    gainMapStale:   false,
+    view3D:         s.view3D,
+    ellipseEnabled: s.ellipseEnabled,
+  })),
 }))

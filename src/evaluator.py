@@ -11,6 +11,7 @@ def _build_registry():
     from .strategies.max_separation import MaxSeparationStrategy
     from .strategies.centroid import CentroidStrategy
     from .strategies.hybrid import HybridStrategy
+    from .strategies.adaptive import AdaptiveStrategy
     from .strategies.info_gain import InfoGainStrategy
     from .strategies.entropy_gradient import EntropyGradientStrategy
     from .strategies.learned import LearnedStrategy
@@ -21,6 +22,7 @@ def _build_registry():
         "max_separation": MaxSeparationStrategy,
         "centroid": CentroidStrategy,
         "hybrid": HybridStrategy,
+        "adaptive": AdaptiveStrategy,
         "info_gain": InfoGainStrategy,
         "entropy_gradient": EntropyGradientStrategy,
         "learned": LearnedStrategy,
@@ -72,7 +74,6 @@ def evaluate(
         return "CENTRAL"
     failures = sum(1 for r in results if not r.localized)
 
-    # Build (n_trials, MAX_WEEKS) matrix — pad short trials with their last radius
     from .simulation import MAX_WEEKS
     radius_matrix = np.full((len(results), MAX_WEEKS), np.nan)
     for i, r in enumerate(results):

@@ -318,3 +318,102 @@
   border: 1px solid rgba(255,255,255,0.5);
   flex-shrink: 0;
 }
+
+.legendDotGain {
+  width: 10px;
+  height: 8px;
+  background: linear-gradient(90deg, rgba(40,0,80,0.7), rgba(220,180,40,0.9), rgba(255,255,180,1));
+  flex-shrink: 0;
+}
+
+/* ── Overlay toggles (F-A / F-H) ────────────────────── */
+.overlayToggles {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 14;
+  display: flex;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.overlayToggle {
+  background: rgba(3, 8, 5, 0.92);
+  border: 1px solid rgba(0, 230, 118, 0.25);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.overlayToggle:hover {
+  color: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 0 14px rgba(0, 230, 118, 0.25);
+}
+
+.overlayToggleOn {
+  color: var(--amber, #f4b400);
+  border-color: var(--amber, #f4b400);
+  background: rgba(40, 28, 0, 0.85);
+  box-shadow: 0 0 18px rgba(244, 180, 0, 0.25);
+}
+
+/* ── 3D belief surface (F-H) ────────────────────────── */
+.surface3DRoot {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  background: #000;
+}
+
+.surface3DBadge {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 14;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 11px;
+  background: rgba(3, 8, 5, 0.92);
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--green);
+}
+
+.surface3DClose {
+  background: none;
+  border: 1px solid rgba(255, 61, 61, 0.5);
+  color: #ff7a7a;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.surface3DClose:hover {
+  color: #fff;
+  background: rgba(255, 61, 61, 0.5);
+}
+
+.surface3DEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 13;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  pointer-events: none;
+}

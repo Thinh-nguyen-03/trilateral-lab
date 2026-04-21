@@ -1,7 +1,6 @@
 from ..types import Point, SearchState
 from .base import Strategy
 
-# Geographically spread sequence covering the continental US
 SEQUENCE = [
     Point(47.6, -122.3),   # Seattle
     Point(25.8, -80.2),    # Miami

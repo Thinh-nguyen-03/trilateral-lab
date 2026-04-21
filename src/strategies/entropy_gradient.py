@@ -79,5 +79,4 @@ class EntropyGradientStrategy(Strategy):
         if total < 1e-10:
             return float("inf")
         group_p = group_w / total
-        # Shannon entropy in nats — maximising this maximises information gained from the measurement
         return float(-np.sum(group_p * np.log(group_p + 1e-30)))

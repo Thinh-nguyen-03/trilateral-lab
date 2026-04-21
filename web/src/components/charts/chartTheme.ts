@@ -1,5 +1,3 @@
-// Bloomberg terminal aesthetic — dark, amber-accented, dense, monospace
-
 export const MONO = "'JetBrains Mono', 'Courier New', monospace"
 
 export const DARK_LAYOUT: Partial<Plotly.Layout> = {
@@ -38,7 +36,6 @@ export const WEEKS_COLORSCALE: [number, string][] = [
   [1.0,  '#8b1a1a'],
 ]
 
-// Bloomberg terminal color palette: amber, cyan, green, red, purple, teal
 export const BLOOMBERG_COLORS = [
   '#ffab00',
   '#00bcd4',

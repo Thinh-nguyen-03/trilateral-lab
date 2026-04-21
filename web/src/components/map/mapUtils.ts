@@ -10,11 +10,9 @@ export const GRID = {
   STEP: 0.1,
   N_LATS: 250,
   N_LONS: 578,
-  TOTAL: 250 * 578, // 144500
+  TOTAL: 250 * 578,
 } as const
 
-// Pre-generated interleaved [lon, lat, lon, lat, ...] for all 144500 cells.
-// Computed once, same reference every call → deck.gl skips GPU re-upload.
 let _gridPositions: Float32Array | null = null
 
 export function getGridPositions(): Float32Array {
@@ -80,7 +78,6 @@ export function decodeParticles(belief: ParticleBeliefModel): DecodedParticles {
   }
 }
 
-// Color palette for measurement rings/dots (one color per week, cycles)
 export const WEEK_PALETTE: [number, number, number][] = [
   [100, 149, 237],
   [255, 165, 0],

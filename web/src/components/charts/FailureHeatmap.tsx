@@ -13,6 +13,16 @@ export function FailureHeatmap({ rows }: Props) {
   const meanZ = pivotOn(rows, 'mean',         STRATEGY_ORDER, MODE_ORDER)
   const text  = z.map((row) => row.map((v) => `${(v * 100).toFixed(0)}%`)) as unknown as string[]
 
+  // F-B — bootstrap 95% CI on the failure rate, formatted inline for the hover.
+  const ciText = STRATEGY_ORDER.map((s) =>
+    MODE_ORDER.map((m) => {
+      const row = rows.find((r) => r.strategy === s && r.mode === m)
+      const ci = row?.failure_rate_ci
+      return ci ? `[${(ci[0] * 100).toFixed(1)}% – ${(ci[1] * 100).toFixed(1)}%]` : '—'
+    }),
+  )
+  const custom = meanZ.map((row, i) => row.map((v, j) => [v, ciText[i][j]]))
+
   return (
     <Plot
       data={[{
@@ -23,8 +33,8 @@ export function FailureHeatmap({ rows }: Props) {
         text,
         texttemplate: '%{text}',
         textfont: { size: 12, family: MONO, color: '#f0f0f0' },
-        customdata: meanZ,
-        hovertemplate: '<b>%{y} / %{x}</b><br>Fail: %{z:.1%}<br>Mean: %{customdata:.1f}w<extra></extra>',
+        customdata: custom as unknown as Plotly.Datum[][],
+        hovertemplate: '<b>%{y} / %{x}</b><br>Fail: %{z:.1%}<br>95% CI: %{customdata[1]}<br>Mean: %{customdata[0]:.1f}w<extra></extra>',
         colorscale: FAILURE_COLORSCALE,
         zmin: 0,
         zmax: 1,

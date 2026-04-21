@@ -60,9 +60,6 @@ class InfoGainStrategy(Strategy):
         dists = haversine_vec(observer.lat, observer.lon, lats, lons)
 
         if mode == "EXACT":
-            # Bucket by 2-mile intervals to match GridBelief's hard ring tolerance.
-            # Using bincount is consistent with the hard-mask update and ~20x faster
-            # than the 15-bucket exp loop used for Gaussian modes.
             ids = np.round(dists / 2.0).astype(np.int32)
             ids -= ids.min()
             group_w = np.bincount(ids, weights=w)

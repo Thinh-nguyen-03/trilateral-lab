@@ -54,9 +54,22 @@ class StartSessionResponse(BaseModel):
 
 
 class StepRequest(BaseModel):
-    # For the manual strategy the caller provides the next measurement location.
-    # Ignored for all other strategies.
     location: Optional[PointModel] = None
+    include_gain_map: bool = False
+
+
+class GainPoint(BaseModel):
+    lat: float
+    lon: float
+    gain: float       # normalized to [0, 1] within the response
+
+
+class EllipseModel(BaseModel):
+    center_lat: float
+    center_lon: float
+    semi_major_mi: float   # 95% confidence
+    semi_minor_mi: float
+    angle_deg: float       # rotation of major axis CCW from east
 
 
 class StepResponse(BaseModel):
@@ -70,9 +83,16 @@ class StepResponse(BaseModel):
     measurements: list[MeasurementModel]
     belief: Union[GridBeliefModel, ParticleBeliefModel]
     box_location: Optional[PointModel] = None  # revealed only when trial_complete
+    gain_map_points: Optional[list[GainPoint]] = None  # populated when include_gain_map=True
+    ellipse: Optional[EllipseModel] = None
 
 
-VALID_STRATEGIES = {"fixed", "random", "max_separation", "centroid", "info_gain", "entropy_gradient", "learned", "manual"}
+class GainMapResponse(BaseModel):
+    points: list[GainPoint]
+    max_gain: float
+
+
+VALID_STRATEGIES = {"fixed", "random", "max_separation", "centroid", "adaptive", "info_gain", "entropy_gradient", "learned", "manual"}
 VALID_MODES = {
     "EXACT",
     "ROUND_10_MILES",

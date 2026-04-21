@@ -43,6 +43,14 @@ export interface StartSessionResponse {
   box_location: PointModel
 }
 
+export interface EllipseModel {
+  center_lat: number
+  center_lon: number
+  semi_major_mi: number
+  semi_minor_mi: number
+  angle_deg: number
+}
+
 export interface StepResponse {
   week: number
   localized: boolean
@@ -54,6 +62,8 @@ export interface StepResponse {
   measurements: MeasurementModel[]
   belief: BeliefModel
   box_location: PointModel | null
+  gain_map_points?: { lat: number; lon: number; gain: number }[] | null
+  ellipse?: EllipseModel | null
 }
 
 export interface RegionStats {
@@ -82,6 +92,9 @@ export interface ResultStats {
   median_radius_curve?: number[]
   regional_stats?: Record<string, RegionStats | null>
   threshold_stats?: Record<string, ThresholdStats>
+  mean_ci?: [number, number]
+  failure_rate_ci?: [number, number]
+  cdf_curve?: number[]
 }
 
 export type RawResults = Record<string, ResultStats>

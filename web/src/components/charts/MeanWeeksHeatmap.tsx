@@ -13,6 +13,15 @@ export function MeanWeeksHeatmap({ rows }: Props) {
   const failZ = pivotOn(rows, 'failure_rate',  STRATEGY_ORDER, MODE_ORDER)
   const text  = z.map((row) => row.map((v) => `${v.toFixed(0)}w`)) as unknown as string[]
 
+  const ciText = STRATEGY_ORDER.map((s) =>
+    MODE_ORDER.map((m) => {
+      const row = rows.find((r) => r.strategy === s && r.mode === m)
+      const ci = row?.mean_ci
+      return ci ? `[${ci[0].toFixed(1)} – ${ci[1].toFixed(1)}]` : '—'
+    }),
+  )
+  const custom = failZ.map((row, i) => row.map((v, j) => [v, ciText[i][j]]))
+
   return (
     <Plot
       data={[{
@@ -23,8 +32,8 @@ export function MeanWeeksHeatmap({ rows }: Props) {
         text,
         texttemplate: '%{text}',
         textfont: { size: 12, family: MONO, color: '#f0f0f0' },
-        customdata: failZ,
-        hovertemplate: '<b>%{y} / %{x}</b><br>Mean: %{z:.1f}w<br>Fail: %{customdata:.1%}<extra></extra>',
+        customdata: custom as unknown as Plotly.Datum[][],
+        hovertemplate: '<b>%{y} / %{x}</b><br>Mean: %{z:.1f}w<br>95% CI: %{customdata[1]}<br>Fail: %{customdata[0]:.1%}<extra></extra>',
         colorscale: WEEKS_COLORSCALE,
         zmin: 5,
         zmax: 52,

@@ -70,7 +70,6 @@ class PlacementEnv:
         return self._observation()
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, StepInfo]:
-        # Map action in [-1, 1]^2 to CONUS lat/lon
         a = np.clip(action, -1.0, 1.0)
         lat = LAT_MIN + 0.5 * (a[0] + 1.0) * (LAT_MAX - LAT_MIN)
         lon = LON_MIN + 0.5 * (a[1] + 1.0) * (LON_MAX - LON_MIN)
@@ -108,8 +107,6 @@ class PlacementEnv:
         centroid = self.belief.best_estimate()
         radius = self.belief.uncertainty_radius()
 
-        # Entropy of the belief (only meaningful for GridBelief; for particles
-        # we use log of effective sample size).
         w = np.asarray(self.belief.weights).ravel()
         total = w.sum()
         if total <= 0:

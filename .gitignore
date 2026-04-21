@@ -14,8 +14,9 @@ data/results.json
 data/*.png
 data/*.html
 
-# Claude Code internals
+# Local-only planning docs
 .claude/
+docs/features.md
 
 # OS
 .DS_Store

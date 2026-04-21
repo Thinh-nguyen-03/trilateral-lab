@@ -1,5 +1,3 @@
-// Parameter properties in constructors ('public status') are not allowed with
-// erasableSyntaxOnly. Use explicit assignment instead.
 export class ApiError extends Error {
   status: number
   constructor(status: number, message: string) {

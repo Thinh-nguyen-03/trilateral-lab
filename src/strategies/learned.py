@@ -46,8 +46,6 @@ class LearnedStrategy(Strategy):
     def choose_location(self, state: SearchState) -> Point:
         obs = self._observation(state)
         action = forward(self._theta, obs)
-        # Map [-1, 1]^2 action to CONUS bounding box, then snap to nearest
-        # valid CONUS candidate point.
         lat = LAT_MIN + 0.5 * (action[0] + 1.0) * (LAT_MAX - LAT_MIN)
         lon = LON_MIN + 0.5 * (action[1] + 1.0) * (LON_MAX - LON_MIN)
         d = haversine_vec(float(lat), float(lon), self._cand_lats, self._cand_lons)
@@ -57,7 +55,6 @@ class LearnedStrategy(Strategy):
         week = max(state.week, 1)
         belief = state.belief
         if belief is None:
-            # Prior-only observation for week 1
             return np.array([
                 week / MAX_WEEKS, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0
             ], dtype=np.float64)

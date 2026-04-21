@@ -27,11 +27,8 @@ export function AdversarialLandscape({ data, strategy, mode }: Props) {
 
   const label = STRATEGY_LABELS[strategy] ?? strategy
 
-  // Convert nulls to NaN so Plotly renders them as blank cells, not zero.
   const z = cell.mean_weeks.map((row) => row.map((v) => (v == null ? NaN : v)))
 
-  // Find global color range using only valid cells across all strategies/modes,
-  // so the choropleths are visually comparable.
   const allVals: number[] = []
   for (const k of Object.keys(data.cells)) {
     for (const row of data.cells[k].mean_weeks) {

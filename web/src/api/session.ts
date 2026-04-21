@@ -15,13 +15,27 @@ export async function startSession(
 export async function stepSession(
   sessionId: string,
   location?: { lat: number; lon: number } | null,
+  includeGainMap = false,
 ): Promise<StepResponse> {
   return apiFetch<StepResponse>(`/api/session/${sessionId}/step`, {
     method: 'POST',
-    body: JSON.stringify({ location: location ?? undefined }),
+    body: JSON.stringify({ location: location ?? undefined, include_gain_map: includeGainMap }),
   })
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {
   await fetch(`/api/session/${sessionId}`, { method: 'DELETE' })
+}
+
+export interface GainPoint { lat: number; lon: number; gain: number }
+export interface GainMapResponse { points: GainPoint[]; max_gain: number }
+
+export async function fetchGainMap(
+  sessionId: string,
+  signal?: AbortSignal,
+): Promise<GainMapResponse> {
+  return apiFetch<GainMapResponse>(`/api/session/${sessionId}/gain-map`, {
+    method: 'POST',
+    signal,
+  })
 }

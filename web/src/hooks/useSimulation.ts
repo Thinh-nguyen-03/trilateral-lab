@@ -3,8 +3,6 @@ import { startSession, stepSession, deleteSession } from '../api/session'
 import { useSimulationStore } from '../store/simulationStore'
 import { decodeGridBelief, decodeParticles } from '../components/map/mapUtils'
 
-// Module-level singletons so multiple hook instances (SimulationPage + StepControls)
-// share the same timer and guard, preventing double-step and un-clearable intervals.
 const _autoPlay = { current: null as ReturnType<typeof setInterval> | null }
 const _stepping = { current: false }
 
@@ -18,18 +16,17 @@ export function useSimulation() {
       clearInterval(autoPlayRef.current)
       autoPlayRef.current = null
     }
-    // only update status if still playing (not already complete/reset)
     const { status } = useSimulationStore.getState()
     if (status === 'playing') store.setStatus('running')
   }, [store])
 
   const step = useCallback(async (location?: { lat: number; lon: number } | null) => {
-    const { sessionId } = useSimulationStore.getState()
+    const { sessionId, gainMapEnabled } = useSimulationStore.getState()
     if (!sessionId || steppingRef.current) return
     steppingRef.current = true
 
     try {
-      const res = await stepSession(sessionId, location)
+      const res = await stepSession(sessionId, location, gainMapEnabled)
 
       let grid = null
       let particles = null
@@ -40,6 +37,10 @@ export function useSimulation() {
       }
 
       store.addStep(res, grid, particles)
+
+      if (gainMapEnabled && res.gain_map_points) {
+        store.setGainMapPoints(res.gain_map_points)
+      }
 
       if (res.trial_complete) {
         stopAutoPlay()
@@ -52,7 +53,6 @@ export function useSimulation() {
     }
   }, [store, stopAutoPlay])
 
-  // Keep a stable ref to step so the interval always calls the latest version
   const stepRef = useRef(step)
   stepRef.current = step
 

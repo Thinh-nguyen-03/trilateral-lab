@@ -32,7 +32,6 @@ export function useKeyboardShortcuts({
           if (status === 'idle') {
             start()
           } else if (isManual) {
-            // No auto-play or step for manual — user must click the map
             return
           } else if (status === 'playing') {
             stopAutoPlay()

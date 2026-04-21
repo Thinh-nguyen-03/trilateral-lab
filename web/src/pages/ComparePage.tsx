@@ -38,7 +38,6 @@ export function ComparePage() {
   const seedAdversarial = useCallback(async () => {
     try {
       const data = await fetchAdversarial()
-      // Prefer exact key; fall back to available strategies in priority order
       const fallbacks = ['max_separation', 'centroid', 'random', 'fixed']
       const mode = data.modes.includes(left.measurementMode) ? left.measurementMode : data.modes[0]
       const strategy = data.strategies.includes(left.strategy)

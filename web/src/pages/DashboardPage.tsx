@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useResults } from '../hooks/useResults'
 import { useAdversarial } from '../hooks/useAdversarial'
 import { useCrlb } from '../hooks/useCrlb'
+import { useFailureClusters } from '../hooks/useFailureClusters'
 import { ChartContainer } from '../components/charts/ChartContainer'
 import { FailureHeatmap } from '../components/charts/FailureHeatmap'
 import { MeanWeeksHeatmap } from '../components/charts/MeanWeeksHeatmap'
@@ -9,9 +10,11 @@ import { FailureByModeLine } from '../components/charts/FailureByModeLine'
 import { StrategySpreadBar } from '../components/charts/StrategySpreadBar'
 import { MedianP90Heatmap } from '../components/charts/MedianP90Heatmap'
 import { ConvergenceCurves } from '../components/charts/ConvergenceCurves'
+import { EmpiricalCDF } from '../components/charts/EmpiricalCDF'
 import { RegionalBreakdownBar } from '../components/charts/RegionalBreakdownBar'
 import { ThresholdSensitivityChart } from '../components/charts/ThresholdSensitivityChart'
 import { AdversarialLandscape } from '../components/charts/AdversarialLandscape'
+import { FailureClusterMap } from '../components/charts/FailureClusterMap'
 import styles from './DashboardPage.module.css'
 
 const CONVERGENCE_MODES = [
@@ -27,11 +30,15 @@ export function DashboardPage() {
   const { data: rows, isLoading, error } = useResults()
   const { data: adv, error: advError } = useAdversarial()
   const { data: crlb } = useCrlb()
+  const { data: failures, error: failuresError } = useFailureClusters()
   const [convergenceMode, setConvergenceMode] = useState('EXACT')
+  const [cdfMode, setCdfMode] = useState('EXACT')
   const [regionalMode, setRegionalMode] = useState('EXACT')
   const [thresholdMode, setThresholdMode] = useState('EXACT')
   const [advStrategy, setAdvStrategy] = useState('max_separation')
   const [advMode, setAdvMode] = useState('ROUND_100_MILES')
+  const [failStrategy, setFailStrategy] = useState('max_separation')
+  const [failMode, setFailMode] = useState('ROUND_100_MILES')
 
   if (error) {
     return (
@@ -140,6 +147,38 @@ export function DashboardPage() {
         >
           {rows && <MedianP90Heatmap rows={rows} />}
         </ChartContainer>
+      </div>
+
+      {/* ── Section 03B – Empirical CDF (F-B) ── */}
+      <div className={styles.sectionHead}>
+        <span className={styles.sectionNum}>03B</span>
+        <span className={styles.sectionTitle}>EMPIRICAL DISTRIBUTION (CDF)</span>
+        <div className={styles.sectionRule} />
+      </div>
+
+      <div className={styles.grid}>
+        <div className={styles.wide}>
+          <div className={styles.modeFilter}>
+            {CONVERGENCE_MODES.map((m) => (
+              <button
+                key={m.value}
+                className={`${styles.modeChip} ${cdfMode === m.value ? styles.modeChipActive : ''}`}
+                onClick={() => setCdfMode(m.value)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <ChartContainer
+            title="Cumulative fraction of trials localized by week N"
+            subtitle="Sharper, higher curves = faster + more reliable. Curves that flat-line under 1.0 reveal the failure tail."
+            tag="CDF"
+            isLoading={isLoading}
+            height={360}
+          >
+            {rows && <EmpiricalCDF rows={rows} mode={cdfMode} />}
+          </ChartContainer>
+        </div>
       </div>
 
       {/* ── Section 04 – Convergence trajectories ── */}
@@ -300,6 +339,61 @@ export function DashboardPage() {
         <div className={styles.advHint}>
           <span>ADVERSARIAL DATA UNAVAILABLE — RUN </span>
           <code className={styles.advCode}>python scripts/adversarial_placement.py</code>
+        </div>
+      )}
+
+      {/* ── Section 08 – Failure geography (F-K) ── */}
+      {failures && (
+        <>
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionNum}>08</span>
+            <span className={styles.sectionTitle}>FAILURE GEOGRAPHY — DEATH-ZONE CLUSTERS</span>
+            <div className={styles.sectionRule} />
+          </div>
+
+          <div className={styles.grid}>
+            <div className={styles.wide}>
+              <div className={styles.modeFilter}>
+                {failures.strategies.map((s) => (
+                  <button
+                    key={s}
+                    className={`${styles.modeChip} ${failStrategy === s ? styles.modeChipActive : ''}`}
+                    onClick={() => setFailStrategy(s)}
+                  >
+                    {s.replace('_', '-').toUpperCase()}
+                  </button>
+                ))}
+                <span className={styles.modeChipSep}>│</span>
+                {failures.modes.map((m) => (
+                  <button
+                    key={m}
+                    className={`${styles.modeChip} ${failMode === m ? styles.modeChipActive : ''}`}
+                    onClick={() => setFailMode(m)}
+                  >
+                    {m.replace(/_MILES$/, 'mi').replace('NOISY_GAUSSIAN_', 'σ')}
+                  </button>
+                ))}
+              </div>
+              <ChartContainer
+                title="Where each strategy fails"
+                subtitle={
+                  `K-means clusters (k=${failures.n_clusters}) of timed-out target locations. ` +
+                  `Polygons = convex hulls of each cluster. Marker size scales with failure count.`
+                }
+                tag="CLUSTERS"
+                height={400}
+              >
+                <FailureClusterMap data={failures} strategy={failStrategy} mode={failMode} />
+              </ChartContainer>
+            </div>
+          </div>
+        </>
+      )}
+
+      {!failures && failuresError && (
+        <div className={styles.advHint}>
+          <span>FAILURE CLUSTER DATA UNAVAILABLE — RUN </span>
+          <code className={styles.advCode}>python scripts/cluster_failures.py</code>
         </div>
       )}
 
